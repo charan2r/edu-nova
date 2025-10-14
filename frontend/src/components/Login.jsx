@@ -58,10 +58,7 @@ const Login = () => {
     }
     setErrors({});
     try {
-      const res = await axios.post(
-        "https://adequate-charm-production-add0.up.railway.app/auth/login",
-        form
-      );
+      const res = await axios.post("http://localhost:5000/auth/login", form);
       const { token, role } = res.data;
 
       // Store token and role in localStorage

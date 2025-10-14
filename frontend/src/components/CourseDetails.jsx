@@ -29,7 +29,7 @@ const CourseDetails = () => {
   const fetchCourses = async () => {
     try {
       const res = await axios.get(
-        `https://adequate-charm-production-add0.up.railway.app/course/student/courses/${id}`,
+        `http://localhost:5000/course/student/courses/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -115,14 +115,19 @@ const CourseDetails = () => {
                 <img
                   src={
                     filtered[0].image?.startsWith("/uploads/")
-                      ? `https://adequate-charm-production-add0.up.railway.app${filtered[0].image}`
-                      : filtered[0].image
+                      ? `http://localhost:5000${filtered[0].image}`
+                      : filtered[0].image ||
+                        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80"
                   }
                   alt={filtered[0].name}
                   style={{
                     maxWidth: "100%",
                     borderRadius: 16,
                     boxShadow: "0 4px 16px rgba(60,72,88,0.10)",
+                  }}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80";
                   }}
                 />
               </Box>

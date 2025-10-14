@@ -55,7 +55,7 @@ const InstructorDashboard = () => {
   const fetchCourses = async () => {
     try {
       const res = await axios.get(
-        "https://adequate-charm-production-add0.up.railway.app/course/instructor/courses",
+        "http://localhost:5000/course/instructor/courses",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -111,7 +111,7 @@ const InstructorDashboard = () => {
   const handleEdit = async () => {
     try {
       await axios.put(
-        `https://adequate-charm-production-add0.up.railway.app/course/instructor/update/${selectedCourse._id}`,
+        `http://localhost:5000/course/instructor/update/${selectedCourse._id}`,
         editForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -128,7 +128,7 @@ const InstructorDashboard = () => {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `https://adequate-charm-production-add0.up.railway.app/course/instructor/delete/${selectedCourse._id}`,
+        `http://localhost:5000/course/instructor/delete/${selectedCourse._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Course deleted successfully");
@@ -157,7 +157,7 @@ const InstructorDashboard = () => {
       if (addImage) formData.append("image", addImage);
 
       await axios.post(
-        "https://adequate-charm-production-add0.up.railway.app/course/instructor/add",
+        "http://localhost:5000/course/instructor/add",
         formData,
         {
           headers: {
@@ -345,8 +345,9 @@ const InstructorDashboard = () => {
                   height="160"
                   image={
                     course.image?.startsWith("/uploads/")
-                      ? `https://adequate-charm-production-add0.up.railway.app${course.image}`
-                      : course.image
+                      ? `http://localhost:5000${course.image}`
+                      : course.image ||
+                        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80"
                   }
                   alt={course.name}
                   sx={{
@@ -356,6 +357,10 @@ const InstructorDashboard = () => {
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                     aspectRatio: "16/9",
+                  }}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80";
                   }}
                 />
                 <CardContent sx={{ flexGrow: 1 }}>

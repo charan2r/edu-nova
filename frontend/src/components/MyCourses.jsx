@@ -32,7 +32,7 @@ const StudentDashboard = () => {
   const fetchCourses = async () => {
     try {
       const res = await axios.get(
-        "https://adequate-charm-production-add0.up.railway.app/course/student/courses/enrolled",
+        "http://localhost:5000/course/student/courses/enrolled",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -190,9 +190,11 @@ const StudentDashboard = () => {
             <Grid item xs={12} sm={6} md={4} key={course._id}>
               <Card
                 sx={{
-                  height: "100%",
+                  height: 400,
+                  width: 320,
                   display: "flex",
                   flexDirection: "column",
+                  overflow: "hidden",
                   justifyContent: "space-between",
                   borderRadius: 4,
                   boxShadow: "0 8px 24px 0 rgba(60,72,88,0.13)",
@@ -209,17 +211,22 @@ const StudentDashboard = () => {
               >
                 <CardMedia
                   component="img"
-                  height="160"
+                  height="200"
                   image={
-                    course.image?.startsWith("/uploads/")
-                      ? `https://adequate-charm-production-add0.up.railway.app${course.image}`
-                      : course.image
+                    course.image && course.image.includes("/uploads/")
+                      ? `http://localhost:5000${course.image}`
+                      : course.image ||
+                        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80"
                   }
                   alt={course.name}
                   sx={{
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                     objectFit: "cover",
+                  }}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80";
                   }}
                 />
                 <CardContent sx={{ flexGrow: 1 }}>

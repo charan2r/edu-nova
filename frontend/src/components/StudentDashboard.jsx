@@ -54,7 +54,7 @@ const StudentDashboard = () => {
   const fetchCourses = async () => {
     try {
       const res = await axios.get(
-        "https://adequate-charm-production-add0.up.railway.app/course/student/courses",
+        "http://localhost:5000/course/student/courses",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -84,7 +84,7 @@ const StudentDashboard = () => {
   const handleEnroll = async () => {
     try {
       await axios.post(
-        `https://adequate-charm-production-add0.up.railway.app/course/student/courses/${selectedCourse._id}/enroll`,
+        `http://localhost:5000/course/student/courses/${selectedCourse._id}/enroll`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -108,7 +108,7 @@ const StudentDashboard = () => {
 
     try {
       const response = await axios.post(
-        "https://adequate-charm-production-add0.up.railway.app/chat/recommendations",
+        "http://localhost:5000/chat/recommendations",
         { input: userInput },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -359,15 +359,20 @@ const StudentDashboard = () => {
         )}
 
         {/* Courses Grid */}
-        <Grid container spacing={12} sx={{ mt: 6, justifyContent: "center" }}>
+        <Grid
+          container
+          spacing={4}
+          sx={{ mt: 6, justifyContent: "center", alignItems: "stretch" }}
+        >
           {filtered.map((course) => (
             <Grid item xs={12} sm={6} md={4} key={course._id}>
               <Card
                 sx={{
-                  height: "100%",
+                  height: 480,
+                  width: 320,
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "space-between",
+                  overflow: "hidden",
                   borderRadius: 4,
                   boxShadow: "0 8px 24px 0 rgba(60,72,88,0.13)",
                   transition:
@@ -383,11 +388,12 @@ const StudentDashboard = () => {
               >
                 <CardMedia
                   component="img"
-                  height="160"
+                  height="200"
                   image={
-                    course.image?.startsWith("/uploads/")
-                      ? `https://adequate-charm-production-add0.up.railway.app${course.image}`
-                      : course.image
+                    course.image && course.image.includes("/uploads/")
+                      ? `http://localhost:5000${course.image}`
+                      : course.image ||
+                        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80"
                   }
                   alt={course.name}
                   sx={{
@@ -395,17 +401,31 @@ const StudentDashboard = () => {
                     borderTopRightRadius: 16,
                     objectFit: "cover",
                   }}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80";
+                  }}
                 />
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent
+                  sx={{
+                    flexGrow: 1,
+                  }}
+                >
                   <Typography
                     variant="h6"
                     fontWeight="bold"
                     color="primary"
-                    gutterBottom
                     sx={{
                       mb: 1,
                       letterSpacing: 0.5,
                       textShadow: "0 1px 4px rgba(80,80,80,0.07)",
+                      height: "4rem",
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      minHeight: "3rem",
+                      maxHeight: "4.5rem",
                     }}
                   >
                     {course.name}
@@ -414,14 +434,23 @@ const StudentDashboard = () => {
                     variant="body2"
                     color="text.secondary"
                     sx={{
-                      mb: 2,
-                      minHeight: 48,
-                      fontSize: "1rem",
+                      height: "4.5rem",
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      fontSize: "0.9rem",
+                      lineHeight: 1.5,
                     }}
                   >
                     {course.description}
                   </Typography>
-                  <Box display="flex" alignItems="center" mt={2}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    mt="auto"
+                    sx={{ height: "2.5rem" }}
+                  >
                     <Box
                       sx={{
                         width: 32,
@@ -434,18 +463,30 @@ const StudentDashboard = () => {
                         mr: 1,
                         fontSize: 18,
                         color: "#5b6ee1",
+                        flexShrink: 0,
                       }}
                     >
                       <span role="img" aria-label="instructor">
                         👨‍🏫
                       </span>
                     </Box>
-                    <Typography variant="subtitle2" color="primary">
+                    <Typography
+                      variant="subtitle2"
+                      color="primary"
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontSize: "0.85rem",
+                      }}
+                    >
                       Instructor: {course.instructor?.fullname || "Unknown"}
                     </Typography>
                   </Box>
                 </CardContent>
-                <CardActions sx={{ justifyContent: "center", pb: 1, px: 1 }}>
+                <CardActions
+                  sx={{ justifyContent: "center", pb: 2, px: 2, mt: "auto" }}
+                >
                   <Button
                     size="medium"
                     variant="outlined"
@@ -453,9 +494,10 @@ const StudentDashboard = () => {
                       borderRadius: 2,
                       fontWeight: "bold",
                       textTransform: "none",
-                      px: 3,
+                      px: 2,
                       py: 1,
-                      fontSize: "1rem",
+                      fontSize: "0.9rem",
+                      minWidth: "80px",
                     }}
                     onClick={() => {
                       navigate(`/course/${course._id}`);
@@ -473,9 +515,10 @@ const StudentDashboard = () => {
                         "linear-gradient(90deg, #5b6ee1 60%, #7f9cf5 100%)",
                       boxShadow: "0 2px 8px 0 rgba(91,110,225,0.13)",
                       textTransform: "none",
-                      px: 3,
+                      px: 2,
                       py: 1,
-                      fontSize: "1rem",
+                      fontSize: "0.9rem",
+                      minWidth: "80px",
                       "&:hover": {
                         background:
                           "linear-gradient(90deg, #4c51bf 60%, #5b6ee1 100%)",
