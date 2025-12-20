@@ -4,14 +4,11 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) web application that all
 
 ## 📦 Tech Stack
 
-- **Frontend**: React + Material UI (hosted on Vercel)
-- **Backend**: Node.js + Express + Multer (hosted on Railway)
+- **Frontend**: React + Vite + Material UI
+- **Backend**: Node.js + Express + Multer
 - **Database**: MongoDB Atlas
-- **API Integration**: REST API nad OpenAI API
-
-## 🚀 Live URLs
-
-- **Frontend**: https://learning-management-system-one-green.vercel.app 
+- **Deployment**: Docker + Jenkins + AWS EC2
+- **API Integration**: REST API and OpenAI API
 
 ## 🧩 Features
 
@@ -64,7 +61,6 @@ Start frontend:
 npm run dev
 ```
 
-
 ## 🔌 API Endpoints
 
 ### Auth
@@ -91,20 +87,22 @@ npm run dev
 ## 🗃 Database Models
 
 1. User
-  - Include user details and role identifier, such as Student and Instructor.
+
+- Include user details and role identifier, such as Student and Instructor.
 
 2. Course
-  - Include course details, instructor ID, and enrolled student IDs as foreign keys.
+
+- Include course details, instructor ID, and enrolled student IDs as foreign keys.
 
 ---
 
 ## 🤖 Chat Assistant Features
 
 ### **Personalized Course Recommendations**
+
 - Show related courses according to user inputs.
 - Ex: "Hi, can you show me courses for software engineering?", "Are there any courses for web development?"
 
 ---
-
 
 Built with ❤️ using MERN Stack.

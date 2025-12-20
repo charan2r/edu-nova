@@ -10,10 +10,7 @@ const path = require("path");
 const app = express();
 app.use(
   cors({
-    origin: [
-      "https://learning-management-system-one-green.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: [process.env.FRONTEND_URL || "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
