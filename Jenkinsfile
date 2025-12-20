@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         EC2_USER = 'ubuntu'
-        EC2_HOST = "${env.EC2_HOST}"
         PROJECT_PATH = '/home/ubuntu/edu-nova'
     }
 
@@ -11,21 +10,39 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checking out code'
                 checkout scm
+            }
+        }
+
+        stage('Prepare Env File') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
+                    string(credentialsId: 'JWT_SECRET', variable: 'JWT_SECRET'),
+                    string(credentialsId: 'OPENAI_API_KEY', variable: 'OPENAI_API_KEY'),
+                    string(credentialsId: 'FRONTEND_URL', variable: 'FRONTEND_URL')
+                ]) {
+                    sh '''
+cat <<EOF > backend/.env
+PORT=5000
+MONGO_URI=$MONGO_URI
+JWT_SECRET=$JWT_SECRET
+OPENAI_API_KEY=$OPENAI_API_KEY
+FRONTEND_URL=$FRONTEND_URL
+EOF
+                    '''
+                }
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                echo 'Building Docker images'
                 sh 'docker-compose build'
             }
         }
 
         stage('Deploy to EC2') {
             steps {
-                echo 'Deploying to EC2'
                 sshagent(['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
@@ -45,13 +62,8 @@ pipeline {
 
         stage('Verify') {
             steps {
-                echo 'Verifying deployment'
                 sshagent(['ec2-ssh-key']) {
-                    sh """
-                        ssh ${EC2_USER}@${EC2_HOST} '
-                            docker ps
-                        '
-                    """
+                    sh "ssh ${EC2_USER}@${EC2_HOST} docker ps"
                 }
             }
         }
