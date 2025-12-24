@@ -5,9 +5,8 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) web application that all
 ## 📦 Tech Stack
 
 - **Frontend**: React + Vite + Material UI
-- **Backend**: Node.js + Express + Multer
+- **Backend**: Node.js + Express.js
 - **Database**: MongoDB Atlas
-- **Deployment**: Docker + Jenkins + AWS EC2
 - **API Integration**: REST API and OpenAI API
 
 ## 🧩 Features
