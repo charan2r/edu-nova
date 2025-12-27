@@ -75,7 +75,7 @@ const Register = () => {
     }
     setErrors({});
     try {
-      await axios.post("http://localhost:5000/auth/register", form);
+      await axios.post("/api/auth/register", form);
       setAlert({
         open: true,
         message: "Registered successfully!",

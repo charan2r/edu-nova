@@ -16,14 +16,14 @@ app.use(
   })
 );
 app.use(express.json());
-app.use("/auth", authRoutes);
-app.use("/chat", chatRoutes);
-app.use("/course", courseRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/course", courseRoutes);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Starting server
-app.listen(5000, () => {
+app.listen(5000, "0.0.0.0", () => {
   console.log("Server is running on port 5000");
 });
 

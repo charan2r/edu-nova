@@ -50,15 +50,12 @@ const StudentDashboard = () => {
 
   const token = localStorage.getItem("token");
 
-  // Get courses from backend
+  // Get courses
   const fetchCourses = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/course/student/courses",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get("/api/course", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setCourses(res.data);
       setFiltered(res.data);
     } catch (error) {
@@ -84,7 +81,7 @@ const StudentDashboard = () => {
   const handleEnroll = async () => {
     try {
       await axios.post(
-        `http://localhost:5000/course/student/courses/${selectedCourse._id}/enroll`,
+        `/api/course/${selectedCourse._id}/enroll`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -108,7 +105,7 @@ const StudentDashboard = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/chat/recommendations",
+        "/api/chat/recommendations",
         { input: userInput },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -58,7 +58,7 @@ const Login = () => {
     }
     setErrors({});
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", form);
+      const res = await axios.post("/api/auth/login", form);
       const { token, role } = res.data;
 
       // Store token and role in localStorage

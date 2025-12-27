@@ -28,7 +28,7 @@ const CourseStudents = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/course/instructor/courses/${id}/students`, {
+      .get(`/api/course/${id}/students`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setStudents(res.data))

@@ -31,12 +31,9 @@ const StudentDashboard = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/course/student/courses/enrolled",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get("/api/course/enrolled", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setCourses(res.data);
       setFiltered(res.data);
     } catch (error) {

@@ -54,12 +54,9 @@ const InstructorDashboard = () => {
   // fetch courses from the backend
   const fetchCourses = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/course/instructor/courses",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get("/api/course/my-courses", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setCourses(res.data);
       setFiltered(res.data);
     } catch (error) {
@@ -110,11 +107,9 @@ const InstructorDashboard = () => {
   // handle edit course
   const handleEdit = async () => {
     try {
-      await axios.put(
-        `http://localhost:5000/course/instructor/update/${selectedCourse._id}`,
-        editForm,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.put(`/api/course/${selectedCourse._id}`, editForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       alert("Course updated successfully");
       fetchCourses();
     } catch (err) {
@@ -127,10 +122,9 @@ const InstructorDashboard = () => {
   // handle delete course
   const handleDelete = async () => {
     try {
-      await axios.delete(
-        `http://localhost:5000/course/instructor/delete/${selectedCourse._id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.delete(`/api/course/${selectedCourse._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       alert("Course deleted successfully");
       fetchCourses();
     } catch (err) {
@@ -156,16 +150,12 @@ const InstructorDashboard = () => {
       formData.append("content", addForm.content);
       if (addImage) formData.append("image", addImage);
 
-      await axios.post(
-        "http://localhost:5000/course/instructor/add",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post("/api/course", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setAddDialogOpen(false);
       setAddForm({ name: "", description: "", content: "" });
       setAddImage(null);

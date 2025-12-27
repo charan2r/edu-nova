@@ -28,12 +28,9 @@ const CourseDetails = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/course/student/courses/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get(`/api/course/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = Array.isArray(res.data) ? res.data : [res.data];
       setCourses(data);
       setFiltered(data);
@@ -107,6 +104,7 @@ const CourseDetails = () => {
               fontWeight="bold"
               color="primary"
               gutterBottom
+              textAlign="center"
             >
               {filtered[0].name}
             </Typography>
