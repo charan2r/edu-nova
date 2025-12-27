@@ -1,4 +1,4 @@
-# Build stage
+# Stage 1: Build frontend
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -7,16 +7,19 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Production stage
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Copy nginx config for React SPA
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Remove default Nginx config
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy build files to nginx
+# Copy custom config
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Copy build output
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose frontend port
+# Expose port 80
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
