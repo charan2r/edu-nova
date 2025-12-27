@@ -23,8 +23,9 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/dist:/usr/share/nginx/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - frontend
       - backend
-    restart: always
+    networks:
+      - edu-net

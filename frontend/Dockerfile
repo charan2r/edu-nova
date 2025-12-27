@@ -10,9 +10,6 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine
 
-# Copy nginx config for React SPA
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 # Copy build files to nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
