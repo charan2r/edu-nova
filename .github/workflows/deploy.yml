@@ -1,40 +1,42 @@
 name: CI/CD
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
-        steps:
-            # checkout code
-            - name: checkout repository
-              uses: actions/checkout@v3
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout code
+      - name: checkout repository
+        uses: actions/checkout@v3
 
-            # setup docker buildx
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
+      # setup docker buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-            # build backend image
-            - name: Build backend docker image
-              run: docker build -t edu-nova-backend ./backend
+      # build backend image
+      - name: Build backend docker image
+        run: docker build -t edu-nova-backend ./backend
 
-            # build frontend image
-            - name: Build frontend Docker image
-              run: docker build -t edu-nova-frontend ./frontend
+      # build frontend image
+      - name: Build frontend Docker image
+        run: docker build -t edu-nova-frontend ./frontend
 
-            # ssh into ec2 and deploy
-            - name: deploy to ec2
-              uses: appleboy/ssh-action@v0.1.7
-              with:
-                  host: ${{secrets.EC2_HOST}}
-                  username: ${{ secrets.EC2_USER }}
-                  key: ${{ secrets.EC2_SSH_KEY }}
-                  script: |
-                      cd ~/edu-nova
-                      git reset --hard
-                      git pull origin main
-                      docker-compose down
-                      docker-compose up -d --build
+      # ssh into ec2 and deploy
+      - name: deploy to ec2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY_B64 }}
+          script: |
+            echo "${{ secrets.EC2_SSH_KEY_B64 }}" | base64 -d > /tmp/key.pem
+            chmod 600 /tmp/key.pem
+            cd ~/edu-nova
+            git reset --hard
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
