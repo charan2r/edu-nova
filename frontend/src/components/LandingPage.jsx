@@ -60,7 +60,7 @@ const LandingPage = () => {
           sx={{
             marginTop: "100px",
             padding: "10px 30px",
-            backgroundColor: "#5490ccff",
+            backgroundColor: "#355472ff",
             color: "#fff",
             fontWeight: "bold",
             fontSize: "1.2rem",
