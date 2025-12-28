@@ -31,10 +31,8 @@ jobs:
         with:
           host: ${{secrets.EC2_HOST}}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY_B64 }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "${{ secrets.EC2_SSH_KEY_B64 }}" | base64 -d > /tmp/key.pem
-            chmod 600 /tmp/key.pem
             cd ~/edu-nova
             git reset --hard
             git pull origin main
