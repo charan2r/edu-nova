@@ -2,11 +2,8 @@ const express = require("express");
 const Course = require("../models/Course");
 const middleware = require("../middleware/authMiddleware");
 const router = express.Router();
-const multer = require("multer");
-
-const upload = multer({
-  dest: "uploads/",
-});
+const upload = require("../middleware/multer");
+const imagekit = require("../config/imagekit");
 
 // GET all courses
 router.get("/", middleware, async (req, res) => {
@@ -92,10 +89,21 @@ router.post("/", middleware, upload.single("image"), async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
     const { name, description, content } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+    let imageUrl = null;
+    if (req.file) {
+      const image = await imagekit.upload({
+        file: req.file.buffer.toString("base64"),
+        fileName: `course_${Date.now()}.jpg`,
+        folder: "/courses",
+      });
+
+      imageUrl = image.url;
+    }
+
     const add_course = new Course({
       name,
-      image,
+      image: imageUrl,
       description,
       content,
       instructor: req.user.id,
