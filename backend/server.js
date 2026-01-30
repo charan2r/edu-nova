@@ -2,9 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const authRoutes = require("./routes/auth");
-const courseRoutes = require("./routes/course");
-const chatRoutes = require("./routes/chat");
+const v1Routes = require("./routes/V1");
+const { errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 app.use(
@@ -12,12 +11,13 @@ app.use(
     origin: [process.env.FRONTEND_URL || "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
-app.use("/api/auth", authRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/course", courseRoutes);
+app.use("/api/v1", v1Routes);
+
+// Global error handler
+app.use(errorHandler);
 
 // Starting server
 app.listen(5000, "0.0.0.0", () => {
