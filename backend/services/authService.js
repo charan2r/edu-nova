@@ -35,13 +35,69 @@ class AuthService {
       throw new AuthError("Invalid credentials");
     }
 
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
+    // Generate short-lived access token
+    const accessToken = jwt.sign(
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" },
+      { expiresIn: "15m" },
     );
 
-    return { token, role: user.role };
+    // Generate long-lived refresh token
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    // Store refresh token in database
+    user.refreshTokens.push(refreshToken);
+    await user.save();
+
+    return {
+      accessToken,
+      refreshToken,
+      role: user.role,
+      userId: user._id,
+    };
+  }
+
+  async refreshAccessToken(refreshToken) {
+    if (!refreshToken) {
+      throw new AuthError("Refresh token is required");
+    }
+
+    try {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+      );
+      const user = await userRepository.findById(decoded.id);
+
+      if (!user || !user.refreshTokens.includes(refreshToken)) {
+        throw new AuthError("Invalid or expired refresh token");
+      }
+
+      // Generate new access token
+      const newAccessToken = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" },
+      );
+
+      return { accessToken: newAccessToken };
+    } catch (error) {
+      throw new AuthError("Invalid refresh token");
+    }
+  }
+
+  async logout(userId, refreshToken) {
+    const user = await userRepository.findById(userId);
+    if (user) {
+      user.refreshTokens = user.refreshTokens.filter(
+        (token) => token !== refreshToken,
+      );
+      await user.save();
+    }
   }
 }
 

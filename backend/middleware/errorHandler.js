@@ -1,4 +1,4 @@
-export const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
   console.error(err);
   try {
     if (err.name === "AuthError") {
@@ -74,7 +74,7 @@ export const errorHandler = (err, req, res, next) => {
   }
 };
 
-export function methodNotAllowed(req, res, next) {
+function methodNotAllowed(req, res, next) {
   const error = {
     status: 405,
     message: "Method Not Allowed",
@@ -83,3 +83,5 @@ export function methodNotAllowed(req, res, next) {
   };
   res.status(405).json(error);
 }
+
+module.exports = { errorHandler, methodNotAllowed };

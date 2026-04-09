@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const v1Routes = require("./routes/V1");
 const { errorHandler } = require("./middleware/errorHandler");
+const { generalLimiter } = require("./middleware/rateLimiter");
 
 const app = express();
 app.use(
@@ -14,6 +15,11 @@ app.use(
   }),
 );
 app.use(express.json());
+
+// Apply general rate limiting to all API routes
+app.use("/api/", generalLimiter);
+
+// API routes
 app.use("/api/v1", v1Routes);
 
 // Global error handler
