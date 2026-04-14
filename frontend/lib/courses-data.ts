@@ -1,18 +1,18 @@
 export interface Course {
-  id: string
-  title: string
-  description: string
-  instructor: string
-  instructorId: string
-  category: string
-  level: "Beginner" | "Intermediate" | "Advanced"
-  duration: string
-  lessons: number
-  students: number
-  rating: number
-  price: number
-  image: string
-  tags: string[]
+  id: string;
+  title: string;
+  description: string;
+  instructor: string;
+  instructorId: string;
+  category: string;
+  level: "Beginner" | "Intermediate" | "Advanced";
+  duration: string;
+  lessons: number;
+  students: number;
+  rating: number;
+  price: number;
+  image: string;
+  tags: string[];
 }
 
 export const categories = [
@@ -24,135 +24,4 @@ export const categories = [
   "Cybersecurity",
   "DevOps",
   "Blockchain",
-]
-
-export const initialCourses: Course[] = [
-  {
-    id: "1",
-    title: "Complete React Developer Course",
-    description: "Master React from scratch. Build real-world projects with React, Redux, Hooks, and modern JavaScript.",
-    instructor: "Jane Instructor",
-    instructorId: "2",
-    category: "Web Development",
-    level: "Intermediate",
-    duration: "24 hours",
-    lessons: 156,
-    students: 12540,
-    rating: 4.8,
-    price: 89.99,
-    image: "/api/placeholder/400/225",
-    tags: ["React", "JavaScript", "Frontend"],
-  },
-  {
-    id: "2",
-    title: "Python for Data Science",
-    description: "Learn Python programming and data analysis. Master NumPy, Pandas, Matplotlib, and Scikit-learn.",
-    instructor: "Dr. Smith",
-    instructorId: "3",
-    category: "Data Science",
-    level: "Beginner",
-    duration: "32 hours",
-    lessons: 180,
-    students: 28350,
-    rating: 4.9,
-    price: 99.99,
-    image: "/api/placeholder/400/225",
-    tags: ["Python", "Data Analysis", "Machine Learning"],
-  },
-  {
-    id: "3",
-    title: "AWS Cloud Practitioner",
-    description: "Prepare for AWS certification. Learn cloud computing fundamentals and AWS services.",
-    instructor: "Mike Cloud",
-    instructorId: "4",
-    category: "Cloud Computing",
-    level: "Beginner",
-    duration: "18 hours",
-    lessons: 95,
-    students: 8920,
-    rating: 4.7,
-    price: 79.99,
-    image: "/api/placeholder/400/225",
-    tags: ["AWS", "Cloud", "Certification"],
-  },
-  {
-    id: "4",
-    title: "Full Stack Node.js Development",
-    description: "Build complete web applications with Node.js, Express, MongoDB, and React.",
-    instructor: "Jane Instructor",
-    instructorId: "2",
-    category: "Web Development",
-    level: "Advanced",
-    duration: "40 hours",
-    lessons: 220,
-    students: 15680,
-    rating: 4.8,
-    price: 129.99,
-    image: "/api/placeholder/400/225",
-    tags: ["Node.js", "Express", "MongoDB", "Full Stack"],
-  },
-  {
-    id: "5",
-    title: "Machine Learning A-Z",
-    description: "Learn machine learning algorithms and deep learning with Python and TensorFlow.",
-    instructor: "Dr. Smith",
-    instructorId: "3",
-    category: "Machine Learning",
-    level: "Intermediate",
-    duration: "44 hours",
-    lessons: 310,
-    students: 32100,
-    rating: 4.9,
-    price: 149.99,
-    image: "/api/placeholder/400/225",
-    tags: ["Machine Learning", "Python", "TensorFlow"],
-  },
-  {
-    id: "6",
-    title: "Cybersecurity Fundamentals",
-    description: "Learn ethical hacking, penetration testing, and network security fundamentals.",
-    instructor: "Alex Security",
-    instructorId: "5",
-    category: "Cybersecurity",
-    level: "Beginner",
-    duration: "26 hours",
-    lessons: 140,
-    students: 9840,
-    rating: 4.6,
-    price: 89.99,
-    image: "/api/placeholder/400/225",
-    tags: ["Security", "Ethical Hacking", "Network"],
-  },
-  {
-    id: "7",
-    title: "Docker & Kubernetes Mastery",
-    description: "Master containerization with Docker and orchestration with Kubernetes for modern DevOps.",
-    instructor: "Mike Cloud",
-    instructorId: "4",
-    category: "DevOps",
-    level: "Intermediate",
-    duration: "22 hours",
-    lessons: 115,
-    students: 7520,
-    rating: 4.7,
-    price: 99.99,
-    image: "/api/placeholder/400/225",
-    tags: ["Docker", "Kubernetes", "DevOps"],
-  },
-  {
-    id: "8",
-    title: "React Native Mobile Development",
-    description: "Build cross-platform mobile apps with React Native. Deploy to iOS and Android.",
-    instructor: "Jane Instructor",
-    instructorId: "2",
-    category: "Mobile Development",
-    level: "Intermediate",
-    duration: "28 hours",
-    lessons: 165,
-    students: 11200,
-    rating: 4.8,
-    price: 109.99,
-    image: "/api/placeholder/400/225",
-    tags: ["React Native", "Mobile", "iOS", "Android"],
-  },
-]
+];

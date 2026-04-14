@@ -1,70 +1,86 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useAuth, type UserRole } from "@/lib/auth-context"
-import { GraduationCap, Loader2, User, BookOpen, CheckCircle2 } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth, type UserRole } from "@/lib/auth-context";
+import {
+  GraduationCap,
+  Loader2,
+  User,
+  BookOpen,
+  CheckCircle2,
+} from "lucide-react";
 
 const benefits = {
   student: [
-    "Access to 500+ IT courses",
+    "Access to IT courses",
     "AI-powered recommendations",
     "Certificates upon completion",
     "Community support",
   ],
   instructor: [
-    "Create unlimited courses",
+    "Create IT related courses",
     "Reach global audience",
     "Analytics dashboard",
     "Revenue sharing program",
   ],
-}
+};
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const { register } = useAuth()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [role, setRole] = useState<UserRole>("student")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const { register } = useAuth();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("student");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      return
+      setError("Passwords do not match");
+      return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters")
-      return
+      setError("Password must be at least 6 characters");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const success = await register(name, email, password, role)
+      const success = await register(name, email, password, role);
       if (success) {
-        router.push(role === "instructor" ? "/instructor/dashboard" : "/student/dashboard")
+        router.push(
+          role === "instructor"
+            ? "/instructor/dashboard"
+            : "/student/dashboard",
+        );
       } else {
-        setError("Registration failed. Please try again.")
+        setError("Registration failed. Please try again.");
       }
     } catch {
-      setError("An error occurred. Please try again.")
+      setError("An error occurred. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
@@ -97,7 +113,9 @@ export default function RegisterPage() {
                 >
                   <User className="h-6 w-6" />
                   <span className="text-sm font-medium">Student</span>
-                  <span className="text-xs text-muted-foreground">Learn new skills</span>
+                  <span className="text-xs text-muted-foreground">
+                    Learn new skills
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -110,19 +128,22 @@ export default function RegisterPage() {
                 >
                   <BookOpen className="h-6 w-6" />
                   <span className="text-sm font-medium">Instructor</span>
-                  <span className="text-xs text-muted-foreground">Teach others</span>
+                  <span className="text-xs text-muted-foreground">
+                    Teach others
+                  </span>
                 </button>
               </div>
             </div>
 
             {/* Benefits */}
             <div className="rounded-lg border border-border bg-secondary/30 p-4">
-              <p className="mb-2 text-sm font-medium">
-                As a {role}, you get:
-              </p>
+              <p className="mb-2 text-sm font-medium">As a {role}, you get:</p>
               <ul className="space-y-1">
                 {benefits[role].map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <li
+                    key={benefit}
+                    className="flex items-center gap-2 text-xs text-muted-foreground"
+                  >
                     <CheckCircle2 className="h-3 w-3 text-primary" />
                     {benefit}
                   </li>
@@ -186,9 +207,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
@@ -204,12 +223,15 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <span>Already have an account? </span>
-            <Link href="/login" className="font-medium text-primary hover:underline">
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
+            >
               Sign in
             </Link>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

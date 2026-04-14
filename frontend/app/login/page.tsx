@@ -1,42 +1,52 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useAuth, type UserRole } from "@/lib/auth-context"
-import { GraduationCap, Loader2, User, BookOpen } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth, type UserRole } from "@/lib/auth-context";
+import { GraduationCap, Loader2, User, BookOpen } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { login } = useAuth()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [role, setRole] = useState<UserRole>("student")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("student");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
-      const success = await login(email, password, role)
+      const success = await login(email, password, role);
       if (success) {
-        router.push(role === "instructor" ? "/instructor/dashboard" : "/student/dashboard")
+        router.push(
+          role === "instructor"
+            ? "/instructor/dashboard"
+            : "/student/dashboard",
+        );
       } else {
-        setError("Invalid credentials. Please try again.")
+        setError("Invalid credentials. Please try again.");
       }
     } catch {
-      setError("An error occurred. Please try again.")
+      setError("An error occurred. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
@@ -50,7 +60,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-md border-border bg-card">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Sign in to continue your learning journey</CardDescription>
+          <CardDescription>
+            Sign in to continue your learning journey
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,9 +125,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
@@ -131,21 +141,15 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <span>{"Don't have an account? "}</span>
-            <Link href="/register" className="font-medium text-primary hover:underline">
+            <Link
+              href="/register"
+              className="font-medium text-primary hover:underline"
+            >
               Create one
             </Link>
-          </div>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 rounded-lg border border-border bg-secondary/30 p-4">
-            <p className="mb-2 text-sm font-medium">Demo Credentials</p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p>Student: student@demo.com / demo123</p>
-              <p>Instructor: instructor@demo.com / demo123</p>
-            </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
