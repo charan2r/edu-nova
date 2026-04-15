@@ -1,94 +1,97 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Navigation } from "@/components/navigation"
-import { CourseCard } from "@/components/course-card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState, useMemo } from "react";
+import { Navigation } from "@/components/navigation";
+import { CourseCard } from "@/components/course-card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { useCourses } from "@/lib/courses-context"
-import { categories } from "@/lib/courses-data"
-import { Search, Filter, X } from "lucide-react"
+} from "@/components/ui/select";
+import { useCourses } from "@/lib/courses-context";
+import { categories } from "@/lib/courses-data";
+import { Search, Filter, X } from "lucide-react";
 
 export default function CoursesPage() {
-  const { courses } = useCourses()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [selectedLevel, setSelectedLevel] = useState<string>("all")
-  const [sortBy, setSortBy] = useState<string>("popular")
+  const { courses } = useCourses();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedLevel, setSelectedLevel] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("popular");
 
   const filteredCourses = useMemo(() => {
-    let filtered = [...courses]
+    let filtered = [...courses];
 
     // Search filter
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (course) =>
           course.title.toLowerCase().includes(query) ||
           course.description.toLowerCase().includes(query) ||
-          course.tags.some((tag) => tag.toLowerCase().includes(query))
-      )
+          course.tags.some((tag) => tag.toLowerCase().includes(query)),
+      );
     }
 
     // Category filter
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((course) => course.category === selectedCategory)
+      filtered = filtered.filter(
+        (course) => course.category === selectedCategory,
+      );
     }
 
     // Level filter
     if (selectedLevel !== "all") {
-      filtered = filtered.filter((course) => course.level === selectedLevel)
+      filtered = filtered.filter((course) => course.level === selectedLevel);
     }
 
     // Sorting
     switch (sortBy) {
       case "popular":
-        filtered.sort((a, b) => b.students - a.students)
-        break
+        filtered.sort((a, b) => b.students - a.students);
+        break;
       case "rating":
-        filtered.sort((a, b) => b.rating - a.rating)
-        break
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
       case "newest":
-        filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id))
-        break
+        filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        break;
       case "price-low":
-        filtered.sort((a, b) => a.price - b.price)
-        break
+        filtered.sort((a, b) => a.price - b.price);
+        break;
       case "price-high":
-        filtered.sort((a, b) => b.price - a.price)
-        break
+        filtered.sort((a, b) => b.price - a.price);
+        break;
     }
 
-    return filtered
-  }, [courses, searchQuery, selectedCategory, selectedLevel, sortBy])
+    return filtered;
+  }, [courses, searchQuery, selectedCategory, selectedLevel, sortBy]);
 
   const clearFilters = () => {
-    setSearchQuery("")
-    setSelectedCategory("all")
-    setSelectedLevel("all")
-    setSortBy("popular")
-  }
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setSelectedLevel("all");
+    setSortBy("popular");
+  };
 
-  const hasFilters = searchQuery || selectedCategory !== "all" || selectedLevel !== "all"
+  const hasFilters =
+    searchQuery || selectedCategory !== "all" || selectedLevel !== "all";
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold">Browse Courses</h1>
           <p className="text-muted-foreground">
-            Discover {courses.length}+ courses to advance your IT career
+            Discover courses to advance your IT career
           </p>
         </div>
 
@@ -112,7 +115,10 @@ export default function CoursesPage() {
               <span className="text-sm font-medium">Filters:</span>
             </div>
 
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-[180px] bg-input">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -146,8 +152,6 @@ export default function CoursesPage() {
                 <SelectItem value="popular">Most Popular</SelectItem>
                 <SelectItem value="rating">Highest Rated</SelectItem>
                 <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
               </SelectContent>
             </Select>
 
@@ -162,7 +166,9 @@ export default function CoursesPage() {
           {/* Active filters */}
           {hasFilters && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-muted-foreground">Active filters:</span>
+              <span className="text-sm text-muted-foreground">
+                Active filters:
+              </span>
               {searchQuery && (
                 <Badge variant="secondary" className="gap-1">
                   Search: {searchQuery}
@@ -219,5 +225,5 @@ export default function CoursesPage() {
         )}
       </main>
     </div>
-  )
+  );
 }

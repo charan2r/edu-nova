@@ -1,41 +1,39 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useAuth } from "@/lib/auth-context"
-import { 
-  GraduationCap, 
-  Menu, 
-  X, 
-  User, 
-  LogOut, 
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/lib/auth-context";
+import {
+  GraduationCap,
+  Menu,
+  X,
+  User,
+  LogOut,
   LayoutDashboard,
   BookOpen,
-  MessageSquare
-} from "lucide-react"
+  MessageSquare,
+} from "lucide-react";
 
 export function Navigation() {
-  const { user, isAuthenticated, logout } = useAuth()
-  const pathname = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, isAuthenticated, logout } = useAuth();
+  const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = [
-    { href: "/courses", label: "Courses" },
-    { href: "/about", label: "About" },
-  ]
+  const navLinks = [{ href: "/courses", label: "Courses" }];
 
-  const dashboardLink = user?.role === "instructor" 
-    ? "/instructor/dashboard" 
-    : "/student/dashboard"
+  const dashboardLink =
+    user?.role === "instructor"
+      ? "/instructor/dashboard"
+      : "/student/dashboard";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -55,7 +53,9 @@ export function Navigation() {
               key={link.href}
               href={link.href}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === link.href ? "text-primary" : "text-muted-foreground"
+                pathname === link.href
+                  ? "text-primary"
+                  : "text-muted-foreground"
               }`}
             >
               {link.label}
@@ -65,7 +65,9 @@ export function Navigation() {
             <Link
               href="/ai-assistant"
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === "/ai-assistant" ? "text-primary" : "text-muted-foreground"
+                pathname === "/ai-assistant"
+                  ? "text-primary"
+                  : "text-muted-foreground"
               }`}
             >
               AI Assistant
@@ -92,30 +94,41 @@ export function Navigation() {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium">{user?.name}</span>
-                    <span className="text-xs text-muted-foreground capitalize">{user?.role}</span>
+                    <span className="text-xs text-muted-foreground capitalize">
+                      {user?.role}
+                    </span>
                   </div>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href={dashboardLink} className="flex cursor-pointer items-center gap-2">
+                  <Link
+                    href={dashboardLink}
+                    className="flex cursor-pointer items-center gap-2"
+                  >
                     <LayoutDashboard className="h-4 w-4" />
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/courses" className="flex cursor-pointer items-center gap-2">
+                  <Link
+                    href="/courses"
+                    className="flex cursor-pointer items-center gap-2"
+                  >
                     <BookOpen className="h-4 w-4" />
                     Browse Courses
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/ai-assistant" className="flex cursor-pointer items-center gap-2">
+                  <Link
+                    href="/ai-assistant"
+                    className="flex cursor-pointer items-center gap-2"
+                  >
                     <MessageSquare className="h-4 w-4" />
                     AI Assistant
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={logout}
                   className="flex cursor-pointer items-center gap-2 text-destructive focus:text-destructive"
                 >
@@ -143,7 +156,11 @@ export function Navigation() {
           className="md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </Button>
       </nav>
 
@@ -177,17 +194,30 @@ export function Navigation() {
                 >
                   Dashboard
                 </Link>
-                <Button variant="ghost" onClick={() => { logout(); setMobileMenuOpen(false); }}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                >
                   Sign Out
                 </Button>
               </>
             ) : (
               <div className="flex flex-col gap-2">
                 <Button variant="ghost" asChild>
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                    Sign In
+                  </Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/register" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
                 </Button>
               </div>
             )}
@@ -195,5 +225,5 @@ export function Navigation() {
         </div>
       )}
     </header>
-  )
+  );
 }

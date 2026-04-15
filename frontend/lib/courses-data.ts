@@ -16,12 +16,10 @@ export interface Course {
 }
 
 export const categories = [
-  "Web Development",
-  "Mobile Development",
+  "Fullstack Development",
   "Data Science",
   "Machine Learning",
   "Cloud Computing",
   "Cybersecurity",
   "DevOps",
-  "Blockchain",
 ];

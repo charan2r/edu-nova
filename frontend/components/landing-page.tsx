@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { 
-  GraduationCap, 
-  BookOpen, 
-  Users, 
-  Award, 
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  GraduationCap,
+  BookOpen,
+  Users,
+  Award,
   Play,
   ArrowRight,
   Code,
@@ -15,26 +15,28 @@ import {
   Cloud,
   Shield,
   Sparkles,
-  CheckCircle2
-} from "lucide-react"
+  CheckCircle2,
+} from "lucide-react";
 
 const stats = [
   { label: "Active Students", value: "50,000+" },
   { label: "Expert Instructors", value: "200+" },
   { label: "Courses Available", value: "500+" },
   { label: "Completion Rate", value: "94%" },
-]
+];
 
 const features = [
   {
     icon: Code,
-    title: "Web Development",
-    description: "Master React, Node.js, and modern web technologies with hands-on projects.",
+    title: "Fullstack Development",
+    description:
+      "Learn React, Node.js, and other modern web technologies with hands-on projects.",
   },
   {
     icon: Database,
     title: "Data Science",
-    description: "Learn Python, machine learning, and data analysis from industry experts.",
+    description:
+      "Learn Python, machine learning, and data analysis from industry experts.",
   },
   {
     icon: Cloud,
@@ -44,18 +46,17 @@ const features = [
   {
     icon: Shield,
     title: "Cybersecurity",
-    description: "Protect digital assets with ethical hacking and security fundamentals.",
+    description:
+      "Protect digital assets with ethical hacking and security fundamentals.",
   },
-]
+];
 
 const benefits = [
   "Self-paced learning with lifetime access",
   "Real-world projects and case studies",
   "Certificate of completion",
-  "24/7 community support",
   "AI-powered course recommendations",
-  "Mobile-friendly platform",
-]
+];
 
 export function LandingPage() {
   return (
@@ -72,13 +73,12 @@ export function LandingPage() {
               <span>AI-Powered Learning Platform</span>
             </div>
             <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl text-balance">
-              Master IT Skills with{" "}
-              <span className="text-primary">Expert-Led</span> Courses
+              Build IT Skills with <span className="text-primary">Guided</span>{" "}
+              Courses
             </h1>
             <p className="mb-8 text-lg text-muted-foreground text-pretty max-w-2xl mx-auto">
-              Join thousands of learners advancing their careers in tech. 
-              From web development to machine learning, learn from industry professionals 
-              and get personalized recommendations from our AI assistant.
+              Join others growing in tech. Learn Fullstack development, machine
+              learning, and get helpful advice from AI.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild className="min-w-[180px]">
@@ -87,7 +87,12 @@ export function LandingPage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="min-w-[180px]">
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="min-w-[180px]"
+              >
                 <Link href="/courses">
                   <Play className="mr-2 h-4 w-4" />
                   Browse Courses
@@ -99,37 +104,51 @@ export function LandingPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="border-y border-border bg-card/50 py-12">
+      {/*<section className="border-y border-border bg-card/50 py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold text-primary sm:text-4xl">{stat.value}</div>
-                <div className="mt-1 text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-3xl font-bold text-primary sm:text-4xl">
+                  {stat.value}
+                </div>
+                <div className="mt-1 text-sm text-muted-foreground">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Features Section */}
       <section className="py-20 lg:py-28">
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Learn In-Demand Skills</h2>
+            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
+              Learn In-Demand Skills
+            </h2>
             <p className="text-muted-foreground">
-              Our curriculum is designed by industry experts to help you master the most sought-after technologies.
+              Our program is built by experts to teach you the most needed
+              technologies.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
-              <Card key={feature.title} className="border-border bg-card transition-colors hover:border-primary/50">
+              <Card
+                key={feature.title}
+                className="border-border bg-card transition-colors hover:border-primary/50"
+              >
                 <CardContent className="p-6">
                   <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <h3 className="mb-2 text-lg font-semibold">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -146,8 +165,8 @@ export function LandingPage() {
                 Why Choose Edu Nova?
               </h2>
               <p className="mb-8 text-muted-foreground">
-                We combine cutting-edge technology with expert instruction to deliver 
-                the best online learning experience in the industry.
+                We use modern technology and expert teaching to provide a great
+                online learning experience.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {benefits.map((benefit) => (
@@ -163,7 +182,8 @@ export function LandingPage() {
                 <BookOpen className="mb-4 h-8 w-8 text-primary" />
                 <h3 className="mb-2 font-semibold">Learn at Your Pace</h3>
                 <p className="text-sm text-muted-foreground">
-                  Access course materials anytime, anywhere. Learn on your schedule.
+                  Access course materials anytime, anywhere. Learn on your
+                  schedule.
                 </p>
               </Card>
               <Card className="border-border bg-card p-6 sm:mt-8">
@@ -200,12 +220,13 @@ export function LandingPage() {
               Ready to Start Your Learning Journey?
             </h2>
             <p className="mb-8 text-muted-foreground">
-              Join thousands of learners who have transformed their careers with Edu Nova. 
-              Start with our free courses or get personalized recommendations from our AI assistant.
+              Join thousands of learners who have transformed their careers with
+              Edu Nova. Start with our free courses or get personalized
+              recommendations from our AI assistant.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild>
-                <Link href="/register">Create Free Account</Link>
+                <Link href="/register">Create Account</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link href="/login">Sign In</Link>
@@ -232,5 +253,5 @@ export function LandingPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

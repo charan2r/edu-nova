@@ -22,21 +22,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const benefits = {
-  student: [
-    "Access to IT courses",
-    "AI-powered recommendations",
-    "Certificates upon completion",
-    "Community support",
-  ],
-  instructor: [
-    "Create IT related courses",
-    "Reach global audience",
-    "Analytics dashboard",
-    "Revenue sharing program",
-  ],
-};
-
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
@@ -133,22 +118,6 @@ export default function RegisterPage() {
                   </span>
                 </button>
               </div>
-            </div>
-
-            {/* Benefits */}
-            <div className="rounded-lg border border-border bg-secondary/30 p-4">
-              <p className="mb-2 text-sm font-medium">As a {role}, you get:</p>
-              <ul className="space-y-1">
-                {benefits[role].map((benefit) => (
-                  <li
-                    key={benefit}
-                    className="flex items-center gap-2 text-xs text-muted-foreground"
-                  >
-                    <CheckCircle2 className="h-3 w-3 text-primary" />
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
             </div>
 
             {/* Name */}
