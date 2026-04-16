@@ -9,9 +9,10 @@ const { generalLimiter } = require("./middleware/rateLimiter");
 const app = express();
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL || "http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: [process.env.FRONTEND_URL],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "user-id"],
   }),
 );
 app.use(express.json());

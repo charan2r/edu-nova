@@ -61,18 +61,6 @@ export function Navigation() {
               {link.label}
             </Link>
           ))}
-          {isAuthenticated && (
-            <Link
-              href="/ai-assistant"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === "/ai-assistant"
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              }`}
-            >
-              AI Assistant
-            </Link>
-          )}
         </div>
 
         {/* Desktop Auth */}

@@ -28,6 +28,17 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -41,8 +52,12 @@ export default function LoginPage() {
       } else {
         setError("Invalid credentials. Please try again.");
       }
-    } catch {
-      setError("An error occurred. Please try again.");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "An error occurred. Please try again.";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

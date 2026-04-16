@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useChat as useChatContext } from "@/lib/chat-context";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { cn } from "@/lib/utils";
 export function FloatingChatWidget() {
   const pathname = usePathname();
   const { isAuthenticated } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, closeChat, toggleChat } = useChatContext();
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -72,7 +73,7 @@ export function FloatingChatWidget() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(false)}
+              onClick={closeChat}
               className="h-6 w-6 p-0"
             >
               <X className="h-4 w-4" />
@@ -175,7 +176,7 @@ export function FloatingChatWidget() {
 
       {/* Toggle Button */}
       <Button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleChat}
         size="lg"
         className="rounded-full w-14 h-14 shadow-lg"
       >

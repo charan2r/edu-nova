@@ -37,6 +37,21 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
+    if (!name.trim()) {
+      setError("Full name is required");
+      return;
+    }
+
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -60,8 +75,12 @@ export default function RegisterPage() {
       } else {
         setError("Registration failed. Please try again.");
       }
-    } catch {
-      setError("An error occurred. Please try again.");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "An error occurred. Please try again.";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

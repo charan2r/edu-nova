@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/auth-context";
 import { CoursesProvider } from "@/lib/courses-context";
+import { ChatProvider } from "@/lib/chat-context";
 import { FloatingChatWidget } from "@/components/floating-chat-widget";
 import "./globals.css";
 
@@ -17,27 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Edu Nova - Online Learning Platform",
-  description:
-    "Master IT skills with expert-led courses. Learn programming, web development, data science, and more.",
-  generator: "v0.app",
-  icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
-  },
+  title: "Edu Nova ",
 };
 
 export default function RootLayout({
@@ -52,8 +33,10 @@ export default function RootLayout({
       >
         <AuthProvider>
           <CoursesProvider>
-            {children}
-            <FloatingChatWidget />
+            <ChatProvider>
+              {children}
+              <FloatingChatWidget />
+            </ChatProvider>
           </CoursesProvider>
         </AuthProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}

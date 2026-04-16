@@ -1,40 +1,43 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { type Course } from "@/lib/courses-data"
-import { useCourses } from "@/lib/courses-context"
-import { useAuth } from "@/lib/auth-context"
-import { Star, Users, Clock, BookOpen, CheckCircle } from "lucide-react"
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { type Course } from "@/lib/courses-data";
+import { useCourses } from "@/lib/courses-context";
+import { useAuth } from "@/lib/auth-context";
+import { Star, Users, Clock, BookOpen, CheckCircle } from "lucide-react";
 
 interface CourseCardProps {
-  course: Course
-  showEnrollButton?: boolean
+  course: Course;
+  showEnrollButton?: boolean;
 }
 
-export function CourseCard({ course, showEnrollButton = true }: CourseCardProps) {
-  const { enrollInCourse, unenrollFromCourse, isEnrolled } = useCourses()
-  const { isAuthenticated, user } = useAuth()
-  const enrolled = isEnrolled(course.id)
+export function CourseCard({
+  course,
+  showEnrollButton = true,
+}: CourseCardProps) {
+  const { enrollInCourse, unenrollFromCourse, isEnrolled } = useCourses();
+  const { isAuthenticated, user } = useAuth();
+  const enrolled = isEnrolled(course.id);
 
   const handleEnroll = () => {
     if (!isAuthenticated) {
-      window.location.href = "/login"
-      return
+      window.location.href = "/login";
+      return;
     }
     if (enrolled) {
-      unenrollFromCourse(course.id)
+      unenrollFromCourse(course.id);
     } else {
-      enrollInCourse(course.id)
+      enrollInCourse(course.id);
     }
-  }
+  };
 
   const levelColors = {
     Beginner: "bg-green-500/10 text-green-500 border-green-500/20",
     Intermediate: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
     Advanced: "bg-red-500/10 text-red-500 border-red-500/20",
-  }
+  };
 
   return (
     <Card className="flex h-full flex-col border-border bg-card transition-all hover:border-primary/50 hover:shadow-lg">
@@ -43,11 +46,7 @@ export function CourseCard({ course, showEnrollButton = true }: CourseCardProps)
         <div className="absolute inset-0 flex items-center justify-center">
           <BookOpen className="h-12 w-12 text-muted-foreground/30" />
         </div>
-        <div className="absolute left-3 top-3">
-          <Badge variant="secondary" className={levelColors[course.level]}>
-            {course.level}
-          </Badge>
-        </div>
+
         {enrolled && (
           <div className="absolute right-3 top-3">
             <Badge className="bg-primary text-primary-foreground">
@@ -59,45 +58,40 @@ export function CourseCard({ course, showEnrollButton = true }: CourseCardProps)
       </div>
 
       <CardContent className="flex flex-1 flex-col p-4">
-        {/* Category */}
-        <span className="mb-2 text-xs font-medium text-primary">{course.category}</span>
-        
         {/* Title */}
         <h3 className="mb-2 line-clamp-2 text-lg font-semibold leading-tight">
           {course.title}
         </h3>
-        
+
         {/* Description */}
         <p className="mb-4 line-clamp-2 flex-1 text-sm text-muted-foreground">
           {course.description}
         </p>
-        
+
         {/* Instructor */}
         <p className="mb-3 text-sm text-muted-foreground">
-          by <span className="font-medium text-foreground">{course.instructor}</span>
+          by{" "}
+          <span className="font-medium text-foreground">
+            {course.instructor}
+          </span>
         </p>
 
         {/* Stats */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-            <span className="font-medium text-foreground">{course.rating.toFixed(1)}</span>
+            <span className="font-medium text-foreground">
+              {course.rating.toFixed(1)}
+            </span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
             <span>{course.students.toLocaleString()}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>{course.duration}</span>
-          </div>
         </div>
       </CardContent>
 
       <CardFooter className="flex items-center justify-between border-t border-border p-4">
-        <div className="text-xl font-bold text-primary">
-          ${course.price.toFixed(2)}
-        </div>
         {showEnrollButton && user?.role !== "instructor" && (
           <Button
             size="sm"
@@ -109,5 +103,5 @@ export function CourseCard({ course, showEnrollButton = true }: CourseCardProps)
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }
