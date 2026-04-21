@@ -3,29 +3,36 @@
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useChat as useChatContext } from "@/lib/chat-context";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { getCourseRecommendations } from "@/lib/chat-api";
+import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/lib/auth-context";
-import { Send, Sparkles, User, Bot, Loader2, X } from "lucide-react";
+import {
+  Send,
+  Sparkles,
+  User,
+  Bot,
+  Loader2,
+  X,
+  AlertCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function FloatingChatWidget() {
   const pathname = usePathname();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const { isOpen, closeChat, toggleChat } = useChatContext();
+  const { toast } = useToast();
   const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [messages, setMessages] = useState<
+    Array<{ id: string; role: "user" | "assistant"; content: string }>
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
-  });
-
-  const isLoading = status === "streaming" || status === "submitted";
-
-  // Hide on login and register pages
   const shouldHide =
     pathname === "/login" || pathname === "/register" || !isAuthenticated;
 
@@ -37,20 +44,63 @@ export function FloatingChatWidget() {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim() || isLoading) return;
-    sendMessage({ text: inputValue });
-    setInputValue("");
-  };
+    const trimmedInput = inputValue.trim();
 
-  const getMessageText = (message: (typeof messages)[0]) => {
-    return (
-      message.parts
-        ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-        .map((p) => p.text)
-        .join("") || ""
-    );
+    if (!trimmedInput || isLoading) return;
+
+    // Validate input length
+    if (trimmedInput.length > 1000) {
+      setError("Message is too long (max 1000 characters)");
+      toast({
+        title: "Error",
+        description: "Message is too long (max 1000 characters)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setError(null);
+
+    // Add user message
+    const userMessage = {
+      id: Date.now().toString(),
+      role: "user" as const,
+      content: trimmedInput,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+
+    // Get recommendations
+    setIsLoading(true);
+    try {
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
+      const response = await getCourseRecommendations(trimmedInput, token);
+
+      const assistantMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant" as const,
+        content: `Found ${response.recommendations.length} courses: ${response.recommendations.map((c) => c.name).join(", ") || "No courses found"}`,
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to get recommendations";
+      setError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -81,6 +131,25 @@ export function FloatingChatWidget() {
           </CardHeader>
 
           <CardContent className="flex flex-col p-4 h-64 bg-background">
+            {/* Error Alert */}
+            {error && (
+              <div className="mb-2 flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-xs text-destructive">
+                <AlertCircle className="h-3 w-3 mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="font-medium">Error</p>
+                  <p className="text-xs">{error}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setError(null)}
+                  className="h-4 w-4 p-0"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+
             {/* Messages */}
             <div className="flex-1 space-y-2 overflow-y-auto mb-3">
               {messages.length === 0 ? (
@@ -93,7 +162,6 @@ export function FloatingChatWidget() {
               ) : (
                 <>
                   {messages.map((message) => {
-                    const text = getMessageText(message);
                     const isUser = message.role === "user";
 
                     return (
@@ -124,7 +192,7 @@ export function FloatingChatWidget() {
                               : "bg-secondary text-secondary-foreground",
                           )}
                         >
-                          <div className="line-clamp-3">{text}</div>
+                          <div className="line-clamp-3">{message.content}</div>
                         </div>
                       </div>
                     );
@@ -138,7 +206,7 @@ export function FloatingChatWidget() {
                       <div className="flex items-center gap-1 rounded-lg bg-secondary px-3 py-1.5">
                         <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">
-                          Thinking...
+                          Finding courses...
                         </span>
                       </div>
                     </div>
@@ -155,6 +223,7 @@ export function FloatingChatWidget() {
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Ask anything..."
                 disabled={isLoading}
+                maxLength={1000}
                 className="flex-1 h-8 text-xs bg-input"
               />
               <Button

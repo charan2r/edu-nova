@@ -21,6 +21,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  token: string | null;
   login: (email: string, password: string, role: UserRole) => Promise<boolean>;
   register: (
     name: string,
@@ -34,12 +35,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -52,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (storedUser && storedToken) {
           setUser(JSON.parse(storedUser));
+          setToken(storedToken);
           setIsAuthenticated(true);
         }
       } catch (err) {
@@ -145,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
 
       setUser(userData);
+      setToken(data.accessToken);
       localStorage.setItem("user", JSON.stringify(userData));
       setIsAuthenticated(true);
 
@@ -183,6 +186,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("userId");
       localStorage.removeItem("user");
       setUser(null);
+      setToken(null);
       setIsAuthenticated(false);
       setError(null);
     }
@@ -198,6 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         isAuthenticated,
+        token,
         login,
         register,
         logout,
