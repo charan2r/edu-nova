@@ -4,9 +4,9 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) web application that all
 
 ## 📦 Tech Stack
 
-- **Frontend**: React + Vite + Material UI
+- **Frontend**: Next.js
 - **Backend**: Node.js + Express.js
-- **Database**: MongoDB Atlas
+- **Database**: MongoDB
 - **API Integration**: REST API and OpenAI API
 
 ## 🧩 Features
@@ -62,26 +62,31 @@ npm run dev
 
 ## 🔌 API Endpoints
 
-### Auth
+All endpoints are prefixed with `/api/v1`
 
-- `POST /auth/register` – Register user
+### Authentication
+
+- `POST /auth/register` – Register a new user
 - `POST /auth/login` – Login user
+- `POST /auth/refresh` – Refresh access token
+- `POST /auth/logout` – Logout user
 
 ### Courses
 
-- `GET /course/student/courses` – Get all courses for students
-- `GET /course/student/courses/enrolled` – View enrolled courses for students
-- `GET /course/student/courses/:id` – View details of a single course
-- `POST /course/student/courses/:id/enroll` – Enroll in courses for students
-- `GET /course/instructor/courses` – View added courses of a particular instructor
-- `PUT /course/instructor/update/:id` – Update course details for instructors
-- `POST /course/instructor/add` – Adding a new course for instructors
-- `DELETE /course/instructor/delete/:id` – Removing a course for instructors
-- `GET /course/instructor/courses/:id/students` – View student details of an enrolled course for instructors
+- `GET /course/` – Get all courses
+- `GET /course/search/query` – Search courses by query
+- `GET /course/enrolled` – Get user's enrolled courses
+- `GET /course/my-courses` – Get instructor's courses
+- `GET /course/:id` – Get course details
+- `GET /course/:id/students` – Get students enrolled in a course (instructor only)
+- `POST /course/` – Create a new course (instructor only)
+- `POST /course/:id/enroll` – Enroll in a course
+- `PUT /course/:id` – Update course details (instructor only)
+- `DELETE /course/:id` – Delete a course (instructor only)
 
-### Auth
+### Chat & Recommendations
 
-- `POST /chat/recommendations` – Getting course recommendations for students
+- `POST /chat/recommendations` – Get AI-powered course recommendations based on user input
 
 ## 🗃 Database Models
 
