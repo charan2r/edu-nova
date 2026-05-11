@@ -19,6 +19,9 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Edu Nova ",
+  icons: {
+    icon: "/dashboard-monitor.png",
+  },
 };
 
 export default function RootLayout({

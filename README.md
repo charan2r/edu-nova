@@ -4,10 +4,11 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) web application that all
 
 ## 📦 Tech Stack
 
-- **Frontend**: Next.js
-- **Backend**: Node.js + Express.js
+- **Frontend**: Next.js, Tainwind CSS
+- **Backend**: Node.js, Express.js, JWT Auth, Imagekit
 - **Database**: MongoDB
 - **API Integration**: REST API and OpenAI API
+- **DevOps**: Docker
 
 ## 🧩 Features
 
