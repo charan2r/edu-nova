@@ -162,6 +162,29 @@ class CourseService {
     }
   }
 
+  async unenrollStudent(courseId, studentId) {
+    try {
+      const course = await courseRepository.findById(courseId);
+      if (!course) {
+        throw new NotFoundError("Course not found");
+      }
+
+      const isEnrolled = await courseRepository.isStudentEnrolled(
+        courseId,
+        studentId,
+      );
+      if (!isEnrolled) {
+        throw new ValidationError("Student is not enrolled in this course");
+      }
+
+      return await courseRepository.unenrollStudent(courseId, studentId);
+    } catch (error) {
+      if (error.name === "NotFoundError" || error.name === "ValidationError")
+        throw error;
+      throw new Error(`Error unenrolling student: ${error.message}`);
+    }
+  }
+
   async searchCourses(searchTerm, page = 1, limit = 10) {
     try {
       if (!searchTerm || searchTerm.trim().length === 0) {

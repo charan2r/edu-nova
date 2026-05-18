@@ -1,4 +1,5 @@
 const Course = require("../models/Course");
+const mongoose = require("mongoose");
 
 class CourseRepository {
   async findAll(page = 1, limit = 10) {
@@ -21,10 +22,9 @@ class CourseRepository {
   }
 
   async findUserEnrolledCourses(userId) {
-    return Course.find({ students: userId }).populate(
-      "instructor",
-      "fullname email",
-    );
+    return Course.find({
+      students: new mongoose.Types.ObjectId(userId),
+    }).populate("instructor", "fullname email");
   }
 
   async findEnrolledStudents(courseId) {
@@ -51,14 +51,27 @@ class CourseRepository {
   async enrollStudent(courseId, studentId) {
     return Course.findByIdAndUpdate(
       courseId,
-      { $addToSet: { students: studentId } },
+      { $addToSet: { students: new mongoose.Types.ObjectId(studentId) } },
+      { new: true },
+    );
+  }
+
+  async unenrollStudent(courseId, studentId) {
+    return Course.findByIdAndUpdate(
+      courseId,
+      { $pull: { students: new mongoose.Types.ObjectId(studentId) } },
       { new: true },
     );
   }
 
   async isStudentEnrolled(courseId, studentId) {
     const course = await Course.findById(courseId);
-    return course ? course.students.includes(studentId) : false;
+    return course
+      ? course.students.some(
+          (id) =>
+            id.toString() === new mongoose.Types.ObjectId(studentId).toString(),
+        )
+      : false;
   }
 
   async getCourseById(courseId) {

@@ -137,4 +137,39 @@ export const courseApi = {
     if (!response.ok) throw new Error("Failed to search courses");
     return response.json();
   },
+
+  // Enroll in course
+  async enrollInCourse(courseId: string) {
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}/enroll`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("accessToken") : ""}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to enroll in course");
+    }
+    return response.json();
+  },
+
+  // Unenroll from course
+  async unenrollFromCourse(courseId: string) {
+    const response = await fetch(
+      `${API_BASE_URL}/course/${courseId}/unenroll`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("accessToken") : ""}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to unenroll from course");
+    }
+    return response.json();
+  },
 };

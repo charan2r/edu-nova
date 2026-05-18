@@ -59,6 +59,13 @@ router.post(
   courseController.enrollCourse.bind(courseController),
 );
 
+// POST - unenroll user from a course
+router.post(
+  "/:id/unenroll",
+  middleware,
+  courseController.unenrollCourse.bind(courseController),
+);
+
 // PUT - update a course (instructor only)
 router.put(
   "/:id",

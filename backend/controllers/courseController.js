@@ -138,6 +138,21 @@ class CourseController {
     }
   }
 
+  async unenrollCourse(req, res, next) {
+    try {
+      const course = await courseService.unenrollStudent(
+        req.params.id,
+        req.user.id,
+      );
+      res.status(200).json({
+        message: "Unenrolled successfully",
+        course,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async searchCourses(req, res, next) {
     try {
       const { q, page = 1, limit = 10 } = req.query;

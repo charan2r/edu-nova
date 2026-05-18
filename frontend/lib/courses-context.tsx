@@ -21,8 +21,8 @@ interface CoursesContextType {
   ) => Promise<void>;
   updateCourse: (id: string, updates: Partial<Course>) => Promise<void>;
   deleteCourse: (id: string) => Promise<void>;
-  enrollInCourse: (courseId: string) => void;
-  unenrollFromCourse: (courseId: string) => void;
+  enrollInCourse: (courseId: string) => Promise<void>;
+  unenrollFromCourse: (courseId: string) => Promise<void>;
   isEnrolled: (courseId: string) => boolean;
   getInstructorCourses: (instructorId: string) => Course[];
   isLoading: boolean;
@@ -50,6 +50,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
           id: course._id,
           title: course.name,
           description: course.description,
+          content: course.content,
           instructor: course.instructor?.fullname || "Unknown",
           instructorId: course.instructor?._id || "",
           students: course.students?.length || 0,
@@ -110,6 +111,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
         id: c._id,
         title: c.name,
         description: c.description,
+        content: c.content,
         instructor: c.instructor?.fullname || "Unknown",
         instructorId: c.instructor?._id || "",
         students: c.students?.length || 0,
@@ -131,7 +133,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
       await courseApi.updateCourse(id, {
         name: updates.title,
         description: updates.description,
-        content: updates.description,
+        content: updates.content || updates.description,
       });
 
       // Update local state
@@ -157,12 +159,30 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const enrollInCourse = (courseId: string) => {
-    setEnrolledCourses([...enrolledCourses, courseId]);
+  const enrollInCourse = async (courseId: string) => {
+    try {
+      setError(null);
+      await courseApi.enrollInCourse(courseId);
+      setEnrolledCourses([...enrolledCourses, courseId]);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to enroll in course";
+      setError(message);
+      throw err;
+    }
   };
 
-  const unenrollFromCourse = (courseId: string) => {
-    setEnrolledCourses(enrolledCourses.filter((id) => id !== courseId));
+  const unenrollFromCourse = async (courseId: string) => {
+    try {
+      setError(null);
+      await courseApi.unenrollFromCourse(courseId);
+      setEnrolledCourses(enrolledCourses.filter((id) => id !== courseId));
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to unenroll from course";
+      setError(message);
+      throw err;
+    }
   };
 
   const isEnrolled = (courseId: string) => {

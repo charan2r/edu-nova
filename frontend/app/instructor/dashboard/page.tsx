@@ -167,17 +167,30 @@ export default function InstructorDashboard() {
       await updateCourse(editingCourse.id, {
         title: formData.name,
         description: formData.description,
+        content: formData.content,
         instructor: user.name,
         instructorId: user.id,
         image: editingCourse.image,
       });
       setIsEditOpen(false);
       setEditingCourse(null);
+      setFormData({ name: "", description: "", content: "" });
     } catch (err) {
       console.error("Error updating course:", err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleOpenEditForm = (course: Course) => {
+    setEditingCourse(course);
+    setFormData({
+      name: course.title,
+      description: course.description,
+      content: course.content || course.description,
+    });
+    setFormError(null);
+    setIsEditOpen(true);
   };
 
   const handleDeleteCourse = async (courseId: string) => {
@@ -253,51 +266,62 @@ export default function InstructorDashboard() {
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="image">Course Image *</Label>
-        <Input
-          id="image"
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              setImageFile(file);
-              setFormError(null);
-            }
-          }}
-          disabled={isLoading}
-          className="bg-input cursor-pointer"
-        />
-        {imageFile && (
-          <p className="text-sm text-green-600 flex items-center gap-2">
-            ✓ Selected: {imageFile.name}
-          </p>
-        )}
-        {!imageFile && (
-          <p className="text-xs text-muted-foreground">
-            Supported formats: JPG, PNG, GIF, WebP
-          </p>
-        )}
-      </div>
+      {!isEdit && (
+        <div className="space-y-2">
+          <Label htmlFor="image">Course Image *</Label>
+          <Input
+            id="image"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setImageFile(file);
+                setFormError(null);
+              }
+            }}
+            disabled={isLoading}
+            className="bg-input cursor-pointer"
+          />
+          {imageFile && (
+            <p className="text-sm text-green-600 flex items-center gap-2">
+              ✓ Selected: {imageFile.name}
+            </p>
+          )}
+          {!imageFile && (
+            <p className="text-xs text-muted-foreground">
+              Supported formats: JPG, PNG, GIF, WebP
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="flex justify-end gap-2 pt-4">
         <Button
           type="button"
           variant="outline"
           onClick={() => {
-            setIsCreateOpen(false);
+            if (isEdit) {
+              setIsEditOpen(false);
+            } else {
+              setIsCreateOpen(false);
+            }
+            setFormData({ name: "", description: "", content: "" });
+            setImageFile(null);
+            setFormError(null);
           }}
           disabled={isLoading}
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading || !imageFile}>
+        <Button type="submit" disabled={isLoading || (!isEdit && !imageFile)}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating...
+              {isEdit ? "Updating..." : "Creating..."}
             </>
+          ) : isEdit ? (
+            "Update Course"
           ) : (
             "Create Course"
           )}
@@ -376,12 +400,6 @@ export default function InstructorDashboard() {
 
                       <div className="flex flex-wrap items-center gap-6 text-sm">
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                          <span className="font-medium">
-                            {course.rating.toFixed(1)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
                           <Users className="h-4 w-4 text-muted-foreground" />
                           <span>
                             {course.students.toLocaleString()} students
@@ -395,6 +413,12 @@ export default function InstructorDashboard() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleOpenEditForm(course)}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit Course
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDeleteCourse(course.id)}
                               className="text-destructive focus:text-destructive"
