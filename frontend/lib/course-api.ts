@@ -20,15 +20,12 @@ export interface CourseResponse {
 }
 
 export const courseApi = {
-  // Get all courses with pagination
+  // Get all courses with pagination (public endpoint)
   async getAllCourses(page: number = 1, limit: number = 10) {
     const response = await fetch(
       `${API_BASE_URL}/course?page=${page}&limit=${limit}`,
       {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("accessToken") : ""}`,
-        },
       },
     );
     if (!response.ok) throw new Error("Failed to fetch courses");

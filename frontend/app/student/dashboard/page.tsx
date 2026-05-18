@@ -7,7 +7,6 @@ import { Navigation } from "@/components/navigation";
 import { CourseCard } from "@/components/course-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/lib/auth-context";
 import { useCourses } from "@/lib/courses-context";
 import { useChat } from "@/lib/chat-context";

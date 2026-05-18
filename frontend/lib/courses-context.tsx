@@ -41,8 +41,6 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
   // Fetch all courses on mount
   useEffect(() => {
     const fetchCourses = async () => {
-      if (!isAuthenticated) return;
-
       try {
         setIsLoading(true);
         setError(null);
@@ -55,8 +53,8 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
           instructor: course.instructor?.fullname || "Unknown",
           instructorId: course.instructor?._id || "",
           students: course.students?.length || 0,
-          rating: 4.5,
-          image: course.image || "/api/placeholder/400/225",
+          rating: 0,
+          image: course.image,
         }));
 
         setCourses(transformedCourses);
@@ -71,7 +69,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
     };
 
     fetchCourses();
-  }, [isAuthenticated]);
+  }, []);
 
   // Fetch enrolled courses
   useEffect(() => {
@@ -115,7 +113,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
         instructor: c.instructor?.fullname || "Unknown",
         instructorId: c.instructor?._id || "",
         students: c.students?.length || 0,
-        rating: 4.5,
+        rating: 0,
         image: c.image || "/api/placeholder/400/225",
       }));
       setCourses(transformedCourses);

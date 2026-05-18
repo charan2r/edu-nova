@@ -5,19 +5,15 @@ const upload = require("../middleware/multer");
 const courseController = require("../controllers/courseController");
 const { courseCreationLimiter } = require("../middleware/rateLimiter");
 
-// GET - search courses (must be before /:id routes to avoid conflicts)
+// GET - search courses
 router.get(
   "/search/query",
   middleware,
   courseController.searchCourses.bind(courseController),
 );
 
-// GET all courses
-router.get(
-  "/",
-  middleware,
-  courseController.getAllCourses.bind(courseController),
-);
+// GET all courses (public endpoint)
+router.get("/", courseController.getAllCourses.bind(courseController));
 
 // GET user's enrolled courses
 router.get(
@@ -47,7 +43,7 @@ router.get(
   courseController.getEnrolledStudents.bind(courseController),
 );
 
-// POST - create a course (instructor only) - with rate limiting
+// POST - create a course (instructor only)
 router.post(
   "/",
   middleware,

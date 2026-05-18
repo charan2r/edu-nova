@@ -106,15 +106,7 @@ export function Navigation() {
                     Browse Courses
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/ai-assistant"
-                    className="flex cursor-pointer items-center gap-2"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    AI Assistant
-                  </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={logout}

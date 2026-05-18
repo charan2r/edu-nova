@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { type Course } from "@/lib/courses-data";
 import { useCourses } from "@/lib/courses-context";
 import { useAuth } from "@/lib/auth-context";
-import { Star, Users, Clock, BookOpen, CheckCircle } from "lucide-react";
+import { Users, CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 interface CourseCardProps {
   course: Course;
@@ -33,19 +34,16 @@ export function CourseCard({
     }
   };
 
-  const levelColors = {
-    Beginner: "bg-green-500/10 text-green-500 border-green-500/20",
-    Intermediate: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-    Advanced: "bg-red-500/10 text-red-500 border-red-500/20",
-  };
-
   return (
     <Card className="flex h-full flex-col border-border bg-card transition-all hover:border-primary/50 hover:shadow-lg">
       {/* Course Image */}
       <div className="relative aspect-video overflow-hidden rounded-t-lg bg-secondary">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <BookOpen className="h-12 w-12 text-muted-foreground/30" />
-        </div>
+        <Image
+          src={course.image}
+          alt={course.title}
+          fill
+          className="object-cover"
+        />
 
         {enrolled && (
           <div className="absolute right-3 top-3">
@@ -77,21 +75,15 @@ export function CourseCard({
         </p>
 
         {/* Stats */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-            <span className="font-medium text-foreground">
-              {course.rating.toFixed(1)}
-            </span>
-          </div>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
-            <span>{course.students.toLocaleString()}</span>
+            <span>{course.students.toLocaleString()} students</span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between border-t border-border p-4">
+      <CardFooter className="flex items-center justify-center ">
         {showEnrollButton && user?.role !== "instructor" && (
           <Button
             size="sm"
