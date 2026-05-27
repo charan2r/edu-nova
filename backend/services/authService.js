@@ -1,10 +1,19 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userRepository = require("../repositories/userRepository");
+const instituteRepository = require("../repositories/instituteRepository");
 const { AuthError, ValidationError } = require("../utils/errors");
 
 class AuthService {
-  async register({ fullname, email, password, confirmPassword, role }) {
+  // Register
+  async register({
+    fullname,
+    email,
+    password,
+    confirmPassword,
+    role,
+    instituteId,
+  }) {
     if (password !== confirmPassword) {
       throw new ValidationError("Passwords do not match");
     }
@@ -14,14 +23,33 @@ class AuthService {
       throw new ValidationError("Email is already registered");
     }
 
+    // Instructors need to select an institute at registration
+    if (role === "instructor" && !instituteId) {
+      throw new ValidationError("Instructors must select an institute");
+    }
+
+    // Validate institute exists if provided
+    if (instituteId) {
+      const institute = await instituteRepository.findById(instituteId);
+      if (!institute) {
+        throw new ValidationError("Institute not found");
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return userRepository.create({
+    const userData = {
       fullname,
       email,
       password: hashedPassword,
       role,
-    });
+    };
+
+    if (role === "instructor") {
+      userData.institute = instituteId;
+    }
+
+    return userRepository.create(userData);
   }
 
   async login({ email, password }) {
@@ -37,7 +65,7 @@ class AuthService {
 
     // Generate short-lived access token
     const accessToken = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, institute: user.institute },
       process.env.JWT_SECRET,
       { expiresIn: "15m" },
     );
@@ -58,6 +86,7 @@ class AuthService {
       refreshToken,
       role: user.role,
       userId: user._id,
+      institute: user.institute,
     };
   }
 
@@ -79,7 +108,7 @@ class AuthService {
 
       // Generate new access token
       const newAccessToken = jwt.sign(
-        { id: user._id, role: user.role },
+        { id: user._id, role: user.role, institute: user.institute },
         process.env.JWT_SECRET,
         { expiresIn: "15m" },
       );

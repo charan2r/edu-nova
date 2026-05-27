@@ -27,7 +27,7 @@ app.use("/api/v1", v1Routes);
 app.use(errorHandler);
 
 // Starting server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
 });

@@ -6,25 +6,33 @@ class CourseRepository {
     const skip = (page - 1) * limit;
     return Course.find()
       .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
   }
 
   async findById(id) {
-    return Course.findById(id).populate("instructor", "fullname email");
+    return Course.findById(id)
+      .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
+      .lean();
   }
 
   async findByInstructorId(instructorId) {
-    return Course.find({ instructor: instructorId }).populate(
-      "instructor",
-      "fullname email",
-    );
+    return Course.find({ instructor: instructorId })
+      .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
+      .lean();
   }
 
   async findUserEnrolledCourses(userId) {
     return Course.find({
       students: new mongoose.Types.ObjectId(userId),
-    }).populate("instructor", "fullname email");
+    })
+      .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
+      .lean();
   }
 
   async findEnrolledStudents(courseId) {
@@ -75,24 +83,34 @@ class CourseRepository {
   }
 
   async getCourseById(courseId) {
-    return Course.findById(courseId).populate("instructor", "fullname email");
+    return Course.findById(courseId)
+      .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
+      .lean();
   }
 
   async countTotalCourses() {
-    return Course.countDocuments();
+    return Course.countDocuments({ isDeleted: false });
   }
 
   async findCoursesBySearchTerm(searchTerm, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     return Course.find({
-      $or: [
-        { name: { $regex: searchTerm, $options: "i" } },
-        { description: { $regex: searchTerm, $options: "i" } },
+      $and: [
+        { isDeleted: false },
+        {
+          $or: [
+            { name: { $regex: searchTerm, $options: "i" } },
+            { description: { $regex: searchTerm, $options: "i" } },
+          ],
+        },
       ],
     })
       .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
   }
 }
 

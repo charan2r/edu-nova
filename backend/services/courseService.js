@@ -1,4 +1,5 @@
 const courseRepository = require("../repositories/courseRepository");
+const userRepository = require("../repositories/userRepository");
 const {
   ValidationError,
   NotFoundError,
@@ -6,6 +7,7 @@ const {
 } = require("../utils/errors");
 
 class CourseService {
+  // Get all courses with pagination
   async getAllCourses(page = 1, limit = 10) {
     try {
       const courses = await courseRepository.findAll(page, limit);
@@ -22,6 +24,7 @@ class CourseService {
     }
   }
 
+  // Get a specific course
   async getCourseById(courseId) {
     try {
       const course = await courseRepository.findById(courseId);
@@ -35,6 +38,7 @@ class CourseService {
     }
   }
 
+  // Get all enrolled courses for a user
   async getUserEnrolledCourses(userId) {
     try {
       return await courseRepository.findUserEnrolledCourses(userId);
@@ -43,6 +47,7 @@ class CourseService {
     }
   }
 
+  // Get all courses by an instructor
   async getInstructorCourses(instructorId) {
     try {
       return await courseRepository.findByInstructorId(instructorId);
@@ -51,6 +56,7 @@ class CourseService {
     }
   }
 
+  // Get enrolled students for a course
   async getEnrolledStudents(courseId, instructorId) {
     try {
       const course = await courseRepository.findById(courseId);
@@ -69,22 +75,42 @@ class CourseService {
     }
   }
 
+  // Create a new course
   async createCourse(instructorId, courseData, imageUrl = null) {
     try {
       if (!instructorId) {
         throw new AuthError("Instructor ID is required");
       }
 
-      if (!courseData.name || !courseData.description || !courseData.content) {
-        throw new ValidationError(
-          "Name, description, and content are required",
+      if (!courseData.name || !courseData.description) {
+        throw new ValidationError("Name and description are required");
+      }
+
+      // Get instructor's institute
+      const instructor = await userRepository.findById(instructorId);
+      if (!instructor || !instructor.institute) {
+        throw new AuthError(
+          "Instructor must be assigned to an institute to create courses",
         );
       }
 
       const course = {
-        ...courseData,
+        name: courseData.name,
+        description: courseData.description,
+        content: courseData.content,
         image: imageUrl,
+        category: courseData.category,
+        level: courseData.level || "beginner",
+        language: courseData.language || "English",
         instructor: instructorId,
+        institute: instructor.institute,
+        subscription: {
+          isFree: courseData.isFree !== undefined ? courseData.isFree : true,
+          price: courseData.price || 0,
+          currency: courseData.currency || "USD",
+        },
+        totalDuration: courseData.totalDuration || 0,
+        status: courseData.status || "draft",
       };
 
       return await courseRepository.create(course);
@@ -95,6 +121,7 @@ class CourseService {
     }
   }
 
+  // Update course details
   async updateCourse(courseId, instructorId, courseData) {
     try {
       const course = await courseRepository.findById(courseId);
@@ -119,6 +146,7 @@ class CourseService {
     }
   }
 
+  // Delete a course
   async deleteCourse(courseId, instructorId) {
     try {
       const course = await courseRepository.findById(courseId);
@@ -139,6 +167,7 @@ class CourseService {
     }
   }
 
+  // Enroll student in course
   async enrollStudent(courseId, studentId) {
     try {
       const course = await courseRepository.findById(courseId);
@@ -154,7 +183,16 @@ class CourseService {
         throw new ValidationError("Student already enrolled in this course");
       }
 
-      return await courseRepository.enrollStudent(courseId, studentId);
+      // Enroll student in course
+      await courseRepository.enrollStudent(courseId, studentId);
+
+      // Automatically assign student to the course's institute
+      const student = await userRepository.findById(studentId);
+      if (student && !student.institute) {
+        await userRepository.update(studentId, { institute: course.institute });
+      }
+
+      return await courseRepository.findById(courseId);
     } catch (error) {
       if (error.name === "NotFoundError" || error.name === "ValidationError")
         throw error;
@@ -162,6 +200,7 @@ class CourseService {
     }
   }
 
+  // Unenroll student from course
   async unenrollStudent(courseId, studentId) {
     try {
       const course = await courseRepository.findById(courseId);
