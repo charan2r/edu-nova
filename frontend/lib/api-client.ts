@@ -1,9 +1,4 @@
-/**
- * API Client for authenticated requests to the backend
- * Handles token management and automatic token refresh
- */
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 class ApiClient {
   private apiBaseUrl: string;

@@ -9,6 +9,9 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Edu Nova",
+  icons: {
+    icon: "/dashboard-monitor.png",
+  },
 };
 
 export default function RootLayout({
