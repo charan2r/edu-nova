@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import {
   Menu,
   X,
@@ -11,23 +12,67 @@ import {
   Users,
   BookOpen,
   BarChart3,
-  FileText,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
 
-  const navItems = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/dashboard/institutes", label: "Institutes", icon: Building2 },
-    { href: "/dashboard/users", label: "Users", icon: Users },
-    { href: "/dashboard/courses", label: "Courses", icon: BookOpen },
-    { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  ];
+  // Menu items based on role
+  const getNavItems = () => {
+    if (user?.role === "super_admin") {
+      return [
+        { href: "/super_admin", label: "Dashboard", icon: LayoutDashboard },
+        {
+          href: "/super_admin/institutes",
+          label: "Institutes",
+          icon: Building2,
+        },
+        {
+          href: "/super_admin/institute_admins",
+          label: "Institute Admins",
+          icon: Users,
+        },
+        { href: "/super_admin/analytics", label: "Analytics", icon: BarChart3 },
+      ];
+    } else if (user?.role === "institute_admin") {
+      return [
+        { href: "/institute_admin", label: "Dashboard", icon: LayoutDashboard },
+        {
+          href: "/institute_admin/instructors",
+          label: "Instructors",
+          icon: Users,
+        },
+        { href: "/institute_admin/courses", label: "Courses", icon: BookOpen },
+        { href: "/institute_admin/students", label: "Students", icon: Users },
+        {
+          href: "/institute_admin/analytics",
+          label: "Analytics",
+          icon: BarChart3,
+        },
+      ];
+    }
+    return [];
+  };
 
-  const isActive = (href: string) => pathname === href;
+  const navItems = getNavItems();
+
+  const isActive = (href: string) => {
+    if (href === "/super_admin" || href === "/institute_admin") {
+      return pathname === href;
+    }
+
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
 
   return (
     <>
@@ -52,7 +97,7 @@ export function Sidebar() {
         className={cn(
           "fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar-border z-40 transition-all duration-300",
           isOpen ? "w-64" : "w-0 overflow-hidden",
-          "lg:w-64",
+          "lg:relative lg:w-64 lg:translate-x-0",
         )}
       >
         <div className="flex flex-col h-full">
@@ -61,6 +106,9 @@ export function Sidebar() {
             <h1 className="text-2xl font-bold text-sidebar-primary">
               Edu Nova
             </h1>
+            <p className="text-xs text-sidebar-foreground/60 mt-1 capitalize">
+              {user?.role === "super_admin" ? "Super Admin" : "Institute Admin"}
+            </p>
           </div>
 
           {/* Navigation */}
@@ -88,21 +136,15 @@ export function Sidebar() {
 
           {/* Footer */}
           <div className="p-4 border-t border-sidebar-border">
-            <button className="w-full px-4 py-2 rounded-lg bg-sidebar-accent text-sidebar-accent-foreground hover:opacity-90 transition-opacity">
+            <button
+              onClick={handleLogout}
+              className="w-full px-4 py-2 rounded-lg bg-sidebar-accent text-sidebar-accent-foreground hover:opacity-90 transition-opacity"
+            >
               Logout
             </button>
           </div>
         </div>
       </aside>
-
-      {/* Mobile spacing for toggle button */}
-      <style>{`
-        @media (max-width: 1024px) {
-          body {
-            padding-top: 3rem;
-          }
-        }
-      `}</style>
     </>
   );
 }

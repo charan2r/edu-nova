@@ -25,6 +25,15 @@ class UserRepository {
       isDeleted: false,
     }).select("fullname email role institute");
   }
+
+  async findByRole(role) {
+    return User.find({
+      role: role,
+      isDeleted: false,
+    })
+      .populate("institute", "name")
+      .select("fullname email role institute createdAt isActive");
+  }
 }
 
 module.exports = new UserRepository();

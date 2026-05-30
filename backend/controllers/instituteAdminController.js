@@ -9,6 +9,31 @@ const {
 } = require("../utils/errors");
 
 class InstituteAdminController {
+  // Get all institute admins (super_admin only)
+  async getAllAdmins(req, res, next) {
+    try {
+      if (req.user.role !== "super_admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const admins = await userRepository.findByRole("institute_admin");
+
+      res.status(200).json({
+        data: admins.map((admin) => ({
+          id: admin._id,
+          fullname: admin.fullname,
+          email: admin.email,
+          institute: admin.institute?.name || admin.institute || "N/A",
+          instituteId: admin.institute?._id || admin.institute,
+          createdAt: admin.createdAt,
+          isActive: admin.isActive,
+        })),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Get all instructors in institute
   async getInstructors(req, res, next) {
     try {

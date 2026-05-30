@@ -1,22 +1,38 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function Page() {
-  const router = useRouter()
+  const router = useRouter();
+  const { user, token, isLoading } = useAuth();
 
   useEffect(() => {
-    router.push('/dashboard')
-  }, [router])
+    if (isLoading) return;
+
+    if (!token || !user) {
+      // Not authenticated, redirect to login
+      router.push("/login");
+    } else {
+      // Authenticated, redirect based on role
+      if (user.role === "super_admin") {
+        router.push("/super_admin");
+      } else if (user.role === "institute_admin") {
+        router.push("/institute_admin");
+      } else {
+        // Invalid role, redirect to login
+        router.push("/login");
+      }
+    }
+  }, [token, user, isLoading, router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-foreground mb-4">Admin Dashboard</h1>
-        <p className="text-muted-foreground mb-6">Redirecting...</p>
+        <p className="text-muted-foreground mb-6">Initializing...</p>
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
       </div>
     </div>
-  )
+  );
 }

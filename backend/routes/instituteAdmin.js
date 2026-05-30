@@ -3,6 +3,13 @@ const middleware = require("../middleware/authMiddleware");
 const router = express.Router();
 const instituteAdminController = require("../controllers/instituteAdminController");
 
+// GET - all institute admins (super_admin only)
+router.get(
+  "/",
+  middleware,
+  instituteAdminController.getAllAdmins.bind(instituteAdminController),
+);
+
 // GET - all instructors in institute
 router.get(
   "/instructors",

@@ -21,21 +21,7 @@ const userSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
-    // Learning progress
-    progress: {
-      lessonsCompleted: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Lesson",
-        },
-      ],
-      coursesCompleted: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Course",
-        },
-      ],
-    },
+
     refreshTokens: [{ type: String }],
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
@@ -43,8 +29,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Index for faster queries
-userSchema.index({ email: 1 });
 userSchema.index({ institute: 1, role: 1 });
 
 module.exports = mongoose.model("User", userSchema);
