@@ -55,4 +55,18 @@ router.get(
   instituteController.getInstructors.bind(instituteController),
 );
 
+// POST - assign institute admin
+router.post(
+  "/:id/admin",
+  middleware,
+  instituteController.assignAdmin.bind(instituteController),
+);
+
+// DELETE - remove institute admin
+router.delete(
+  "/:id/admin",
+  middleware,
+  instituteController.removeAdmin.bind(instituteController),
+);
+
 module.exports = router;

@@ -139,6 +139,55 @@ class InstituteController {
       next(error);
     }
   }
+
+  // Assign institute admin (super_admin only)
+  async assignAdmin(req, res, next) {
+    try {
+      if (req.user.role !== "super_admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const { instituteId } = req.params;
+      const { adminId } = req.body;
+
+      if (!adminId) {
+        return res.status(400).json({ message: "Admin ID is required" });
+      }
+
+      const result = await instituteService.assignInstituteAdmin(
+        instituteId,
+        adminId,
+        req.user.role,
+      );
+
+      return res.json({
+        message: "Institute admin assigned successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Remove institute admin (super_admin only)
+  async removeAdmin(req, res, next) {
+    try {
+      if (req.user.role !== "super_admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const { instituteId } = req.params;
+
+      const result = await instituteService.removeInstituteAdmin(instituteId);
+
+      return res.json({
+        message: "Institute admin removed successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new InstituteController();

@@ -13,6 +13,7 @@ class AuthService {
     confirmPassword,
     role,
     instituteId,
+    createdByRole,
   }) {
     if (password !== confirmPassword) {
       throw new ValidationError("Passwords do not match");
@@ -21,6 +22,16 @@ class AuthService {
     const existingUser = await userRepository.findByEmail(email);
     if (existingUser) {
       throw new ValidationError("Email is already registered");
+    }
+
+    // institute_admin can only be created by super_admin
+    if (role === "institute_admin" && createdByRole !== "super_admin") {
+      throw new AuthError("Only super_admin can create institute admins");
+    }
+
+    // institute_admin must have instituteId
+    if (role === "institute_admin" && !instituteId) {
+      throw new ValidationError("Institute ID is required for institute_admin");
     }
 
     // Instructors need to select an institute at registration
@@ -45,7 +56,7 @@ class AuthService {
       role,
     };
 
-    if (role === "instructor") {
+    if (role === "instructor" || role === "institute_admin") {
       userData.institute = instituteId;
     }
 

@@ -15,6 +15,10 @@ const instituteSchema = new mongoose.Schema(
       country: String,
       zipCode: String,
     },
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     instructors: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -17,6 +17,14 @@ class UserRepository {
   async update(id, userData) {
     return User.findByIdAndUpdate(id, userData, { new: true });
   }
+
+  async findByInstituteAndRole(instituteId, role) {
+    return User.find({
+      institute: instituteId,
+      role: role,
+      isDeleted: false,
+    }).select("fullname email role institute");
+  }
 }
 
 module.exports = new UserRepository();

@@ -1,17 +1,11 @@
-const OpenAI = require("openai");
+const Groq = require("groq-sdk");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+  timeout: 20000, // 20 second timeout
 });
 
-async function getCourseRecommendations(userInput) {
-  try {
-    const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `You are an AI course recommendation assistant for Edu Nova, an online learning platform specializing in IT courses.
+const SYSTEM_PROMPT = `You are an AI Course Advisor for Edu Nova, an online learning platform specializing in IT courses.
 
 Your role is to help students find the perfect courses based on their:
 - Current skill level (beginner, intermediate, advanced)
@@ -34,29 +28,76 @@ When recommending courses:
 4. Mention prerequisites when relevant
 5. Be encouraging and supportive
 
-Extract keywords or subjects from the user's input that can be used to search course database. Respond with a comma-separated list of relevant courses only.`,
+Keep responses concise but helpful. Use bullet points for clarity when listing multiple items.`;
+
+// Extract keywords for database search
+function extractKeywords(text) {
+  const keywords = [
+    "python",
+    "javascript",
+    "react",
+    "node",
+    "java",
+    "web",
+    "data",
+    "science",
+    "cloud",
+    "aws",
+    "azure",
+    "devops",
+    "docker",
+    "kubernetes",
+    "cybersecurity",
+    "security",
+    "frontend",
+    "backend",
+    "fullstack",
+    "mobile",
+    "sql",
+    "database",
+    "api",
+    "machine",
+    "ai",
+    "ml",
+  ];
+
+  const lowerText = text.toLowerCase();
+  return keywords.filter((keyword) => lowerText.includes(keyword));
+}
+
+async function getCourseRecommendations(userInput) {
+  try {
+    // Get AI-generated response with intelligent recommendations
+    const chatCompletion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content: SYSTEM_PROMPT,
         },
         {
           role: "user",
           content: userInput,
         },
       ],
-      max_tokens: 150,
+      max_tokens: 600,
+      temperature: 0.7,
     });
 
     const content = chatCompletion?.choices?.[0]?.message?.content;
 
     if (!content) {
-      console.error("Invalid response from OpenAI:", chatCompletion);
-      throw new Error("No content returned by OpenAI");
+      console.error("Invalid response from Groq:", chatCompletion);
+      throw new Error("No content returned by Groq");
     }
 
-    // Extract keywords from the content
-    const keywords = content
-      .split(/,|\n|---|:/)
-      .map((k) => k.trim().toLowerCase())
-      .filter(Boolean);
-    return keywords;
+    // Extract keywords for database search
+    const keywords = extractKeywords(userInput);
+
+    return {
+      message: content,
+      keywords: keywords,
+    };
   } catch (err) {
     console.error("Error fetching course recommendations:", err);
     throw new Error(err.message || "Failed to fetch course recommendations");

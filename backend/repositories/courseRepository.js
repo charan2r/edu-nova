@@ -112,6 +112,16 @@ class CourseRepository {
       .limit(limit)
       .lean();
   }
+
+  async findByInstitute(instituteId) {
+    return Course.find({
+      institute: instituteId,
+      isDeleted: false,
+    })
+      .populate("instructor", "fullname email")
+      .populate("institute", "name email logo")
+      .lean();
+  }
 }
 
 module.exports = new CourseRepository();

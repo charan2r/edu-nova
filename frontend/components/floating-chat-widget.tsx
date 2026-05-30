@@ -84,7 +84,11 @@ export function FloatingChatWidget() {
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant" as const,
-        content: `Found ${response.recommendations.length} courses: ${response.recommendations.map((c) => c.name).join(", ") || "No courses found"}`,
+        content:
+          response.message ||
+          (response.recommendations.length > 0
+            ? `Found ${response.recommendations.length} courses: ${response.recommendations.map((c) => c.name).join(", ")}`
+            : "I'm an AI Course Advisor. Ask me about courses!"),
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
@@ -107,7 +111,7 @@ export function FloatingChatWidget() {
     <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
       {/* Chat Window */}
       {isOpen && (
-        <Card className="w-96 max-h-96 shadow-lg border-border">
+        <Card className="w-96 max-h-[600px] shadow-lg border-border">
           <CardHeader className="flex flex-row items-center justify-between gap-2 py-3 px-4 border-b border-border bg-secondary/30">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
@@ -130,7 +134,7 @@ export function FloatingChatWidget() {
             </Button>
           </CardHeader>
 
-          <CardContent className="flex flex-col p-4 h-64 bg-background">
+          <CardContent className="flex flex-col p-4 h-96 bg-background">
             {/* Error Alert */}
             {error && (
               <div className="mb-2 flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-xs text-destructive">
@@ -186,13 +190,13 @@ export function FloatingChatWidget() {
                         </div>
                         <div
                           className={cn(
-                            "max-w-[70%] rounded-lg px-3 py-1.5 text-xs",
+                            "max-w-[70%] rounded-lg px-3 py-1.5 text-xs whitespace-pre-wrap break-words",
                             isUser
                               ? "bg-primary text-primary-foreground"
                               : "bg-secondary text-secondary-foreground",
                           )}
                         >
-                          <div className="line-clamp-3">{message.content}</div>
+                          {message.content}
                         </div>
                       </div>
                     );
@@ -206,7 +210,7 @@ export function FloatingChatWidget() {
                       <div className="flex items-center gap-1 rounded-lg bg-secondary px-3 py-1.5">
                         <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">
-                          Finding courses...
+                          Thinking...
                         </span>
                       </div>
                     </div>

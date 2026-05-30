@@ -3,6 +3,7 @@ const Institute = require("../models/Institute");
 class InstituteRepository {
   async findById(id) {
     return Institute.findById(id)
+      .populate("admin", "fullname email")
       .populate("instructors", "fullname email role")
       .lean();
   }
