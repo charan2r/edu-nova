@@ -9,24 +9,25 @@ const {
 } = require("../utils/errors");
 
 class InstituteAdminController {
-  // Get all institute admins (super_admin only)
+  // Get all instructors in institute (admin only)
   async getAllAdmins(req, res, next) {
     try {
-      if (req.user.role !== "super_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 
-      const admins = await userRepository.findByRole("institute_admin");
+      const instructors = await userRepository.findByRole("instructor");
 
       res.status(200).json({
-        data: admins.map((admin) => ({
-          id: admin._id,
-          fullname: admin.fullname,
-          email: admin.email,
-          institute: admin.institute?.name || admin.institute || "N/A",
-          instituteId: admin.institute?._id || admin.institute,
-          createdAt: admin.createdAt,
-          isActive: admin.isActive,
+        data: instructors.map((instructor) => ({
+          id: instructor._id,
+          fullname: instructor.fullname,
+          email: instructor.email,
+          institute:
+            instructor.institute?.name || instructor.institute || "N/A",
+          instituteId: instructor.institute?._id || instructor.institute,
+          createdAt: instructor.createdAt,
+          isActive: instructor.isActive,
         })),
       });
     } catch (error) {
@@ -37,7 +38,7 @@ class InstituteAdminController {
   // Get all instructors in institute
   async getInstructors(req, res, next) {
     try {
-      if (req.user.role !== "institute_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -57,7 +58,7 @@ class InstituteAdminController {
   // Add instructor to institute
   async addInstructor(req, res, next) {
     try {
-      if (req.user.role !== "institute_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -83,7 +84,7 @@ class InstituteAdminController {
   // Remove instructor from institute
   async removeInstructor(req, res, next) {
     try {
-      if (req.user.role !== "institute_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -106,7 +107,7 @@ class InstituteAdminController {
   // Get all courses in institute
   async getCourses(req, res, next) {
     try {
-      if (req.user.role !== "institute_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -137,7 +138,7 @@ class InstituteAdminController {
   // Get all students in institute
   async getStudents(req, res, next) {
     try {
-      if (req.user.role !== "institute_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -169,7 +170,7 @@ class InstituteAdminController {
   // Update institute settings
   async updateInstitute(req, res, next) {
     try {
-      if (req.user.role !== "institute_admin") {
+      if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 

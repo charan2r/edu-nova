@@ -16,10 +16,8 @@ export default function Page() {
       router.push("/login");
     } else {
       // Authenticated, redirect based on role
-      if (user.role === "super_admin") {
-        router.push("/super_admin");
-      } else if (user.role === "institute_admin") {
-        router.push("/institute_admin");
+      if (user.role === "admin") {
+        router.push("/admin");
       } else {
         // Invalid role, redirect to login
         router.push("/login");

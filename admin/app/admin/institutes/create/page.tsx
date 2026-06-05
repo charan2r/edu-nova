@@ -82,7 +82,7 @@ export default function CreateInstituteForm() {
 
       setSuccess("Institute created successfully!");
       setTimeout(() => {
-        router.push("/super_admin/institutes");
+        router.push("/admin/institutes");
       }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -96,7 +96,7 @@ export default function CreateInstituteForm() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
-          href="/super_admin/institutes"
+          href="/admin/institutes"
           className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted transition text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft size={20} />
@@ -317,7 +317,7 @@ export default function CreateInstituteForm() {
               {loading ? "Creating..." : "Create Institute"}
             </button>
             <Link
-              href="/super_admin/institutes"
+              href="/admin/institutes"
               className="flex-1 px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition text-center font-medium"
             >
               Cancel

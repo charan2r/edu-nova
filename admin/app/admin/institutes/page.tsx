@@ -129,7 +129,7 @@ export default function InstitutesPage() {
           </p>
         </div>
         <Link
-          href="/super_admin/institutes/create"
+          href="/admin/institutes/create"
           className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
           <Plus size={20} />

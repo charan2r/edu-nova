@@ -1,54 +1,69 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Search, Download } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useState, useMemo, useCallback, memo } from "react";
+import { ChevronLeft, ChevronRight, Search, Download } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Column {
-  key: string
-  label: string
-  width?: string
-  render?: (value: any) => React.ReactNode
+  key: string;
+  label: string;
+  width?: string;
+  render?: (value: any) => React.ReactNode;
 }
 
 interface DataTableProps {
-  columns: Column[]
-  data: any[]
-  loading?: boolean
-  onRowClick?: (row: any) => void
-  searchPlaceholder?: string
-  rowsPerPage?: number
-  title?: string
+  columns: Column[];
+  data: any[];
+  loading?: boolean;
+  onRowClick?: (row: any) => void;
+  searchPlaceholder?: string;
+  rowsPerPage?: number;
+  title?: string;
 }
 
-export function DataTable({
+export const DataTable = memo(function DataTable({
   columns,
   data,
   loading = false,
   onRowClick,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = "Search...",
   rowsPerPage = 10,
   title,
 }: DataTableProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter data based on search
-  const filteredData = data.filter((row) =>
-    columns.some((col) =>
-      String(row[col.key]).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  )
+  // Memoize filtered data
+  const filteredData = useMemo(
+    () =>
+      data.filter((row) =>
+        columns.some((col) =>
+          String(row[col.key]).toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
+      ),
+    [data, columns, searchTerm],
+  );
 
-  // Pagination
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage)
-  const startIndex = (currentPage - 1) * rowsPerPage
-  const paginatedData = filteredData.slice(startIndex, startIndex + rowsPerPage)
+  // Memoize pagination
+  const { totalPages, paginatedData } = useMemo(() => {
+    const total = Math.ceil(filteredData.length / rowsPerPage);
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const paginated = filteredData.slice(startIndex, startIndex + rowsPerPage);
+    return { totalPages: total, paginatedData: paginated };
+  }, [filteredData, currentPage, rowsPerPage]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    setCurrentPage(1)
-  }
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const handlePrevPage = useCallback(() => {
+    setCurrentPage((p) => Math.max(1, p - 1));
+  }, []);
+
+  const handleNextPage = useCallback(() => {
+    setCurrentPage((p) => Math.min(totalPages, p + 1));
+  }, [totalPages]);
 
   if (loading) {
     return (
@@ -59,14 +74,18 @@ export function DataTable({
           ))}
         </div>
       </div>
-    )
+    );
   }
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
 
   return (
     <div className="space-y-4">
       {/* Header with title and actions */}
       <div className="flex items-center justify-between gap-4">
-        {title && <h2 className="text-lg font-semibold text-foreground">{title}</h2>}
+        {title && (
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+        )}
         <div className="flex items-center gap-2 ml-auto">
           <button className="p-2 hover:bg-muted rounded-lg transition-colors">
             <Download size={20} className="text-muted-foreground" />
@@ -76,7 +95,10 @@ export function DataTable({
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          size={20}
+        />
         <input
           type="text"
           placeholder={searchPlaceholder}
@@ -95,7 +117,10 @@ export function DataTable({
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className={cn('px-6 py-3 text-left text-sm font-semibold text-foreground', col.width)}
+                    className={cn(
+                      "px-6 py-3 text-left text-sm font-semibold text-foreground",
+                      col.width,
+                    )}
                   >
                     {col.label}
                   </th>
@@ -105,7 +130,10 @@ export function DataTable({
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-8 text-center text-muted-foreground">
+                  <td
+                    colSpan={columns.length}
+                    className="px-6 py-8 text-center text-muted-foreground"
+                  >
                     No data found
                   </td>
                 </tr>
@@ -115,12 +143,18 @@ export function DataTable({
                     key={idx}
                     onClick={() => onRowClick?.(row)}
                     className={cn(
-                      'border-b border-border transition-colors',
-                      onRowClick && 'hover:bg-muted/50 cursor-pointer'
+                      "border-b border-border transition-colors",
+                      onRowClick && "hover:bg-muted/50 cursor-pointer",
                     )}
                   >
                     {columns.map((col) => (
-                      <td key={col.key} className={cn('px-6 py-4 text-sm text-foreground', col.width)}>
+                      <td
+                        key={col.key}
+                        className={cn(
+                          "px-6 py-4 text-sm text-foreground",
+                          col.width,
+                        )}
+                      >
                         {col.render ? col.render(row[col.key]) : row[col.key]}
                       </td>
                     ))}
@@ -136,11 +170,13 @@ export function DataTable({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(startIndex + rowsPerPage, filteredData.length)} of {filteredData.length} results
+            Showing {startIndex + 1} to{" "}
+            {Math.min(startIndex + rowsPerPage, filteredData.length)} of{" "}
+            {filteredData.length} results
           </p>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              onClick={handlePrevPage}
               disabled={currentPage === 1}
               className="p-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
@@ -150,7 +186,7 @@ export function DataTable({
               Page {currentPage} of {totalPages}
             </span>
             <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={handleNextPage}
               disabled={currentPage === totalPages}
               className="p-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
@@ -160,5 +196,5 @@ export function DataTable({
         </div>
       )}
     </div>
-  )
-}
+  );
+});

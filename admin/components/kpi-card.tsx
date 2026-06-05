@@ -1,16 +1,22 @@
-import { ReactNode } from 'react'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { memo, ReactNode } from "react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface KPICardProps {
-  title: string
-  value: string | number
-  change?: number
-  icon?: ReactNode
-  loading?: boolean
+  title: string;
+  value: string | number;
+  change?: number;
+  icon?: ReactNode;
+  loading?: boolean;
 }
 
-export function KPICard({ title, value, change, icon, loading = false }: KPICardProps) {
-  const isPositive = change ? change > 0 : false
+export const KPICard = memo(function KPICard({
+  title,
+  value,
+  change,
+  icon,
+  loading = false,
+}: KPICardProps) {
+  const isPositive = change ? change > 0 : false;
 
   return (
     <div className="bg-card rounded-lg border border-border p-6">
@@ -22,10 +28,18 @@ export function KPICard({ title, value, change, icon, loading = false }: KPICard
               <div className="h-8 w-24 bg-muted rounded animate-pulse" />
             ) : (
               <>
-                <span className="text-3xl font-bold text-foreground">{value}</span>
+                <span className="text-3xl font-bold text-foreground">
+                  {value}
+                </span>
                 {change !== undefined && (
-                  <span className={`text-sm font-medium flex items-center gap-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                    {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                  <span
+                    className={`text-sm font-medium flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {isPositive ? (
+                      <TrendingUp size={16} />
+                    ) : (
+                      <TrendingDown size={16} />
+                    )}
                     {Math.abs(change)}%
                   </span>
                 )}
@@ -40,5 +54,5 @@ export function KPICard({ title, value, change, icon, loading = false }: KPICard
         )}
       </div>
     </div>
-  )
-}
+  );
+});

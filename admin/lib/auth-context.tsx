@@ -6,7 +6,7 @@ interface User {
   id: string;
   email: string;
   fullname: string;
-  role: "super_admin" | "institute_admin";
+  role: "admin";
 }
 
 interface AuthContextType {
@@ -66,8 +66,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Invalid response from server");
       }
 
-      if (role !== "super_admin" && role !== "institute_admin") {
-        throw new Error("Unauthorized: Invalid role for admin panel");
+      if (role !== "admin") {
+        throw new Error("Unauthorized: Only admin can access this panel");
       }
 
       const userData: User = {

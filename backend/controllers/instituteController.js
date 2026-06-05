@@ -1,7 +1,7 @@
 const instituteService = require("../services/instituteService");
 
 class InstituteController {
-  // Create new institute (super_admin only)
+  // Create new institute (admin only)
   async createInstitute(req, res, next) {
     try {
       const { name, email, phone, website, description, logo, address } =
@@ -50,7 +50,7 @@ class InstituteController {
     }
   }
 
-  // Update institute (super_admin only)
+  // Update institute (admin only)
   async updateInstitute(req, res, next) {
     try {
       const { instituteId } = req.params;
@@ -69,7 +69,7 @@ class InstituteController {
     }
   }
 
-  // Add instructor to institute (super_admin onboards instructor)
+  // Add instructor to institute (admin onboards instructor)
   async addInstructor(req, res, next) {
     try {
       const { instituteId } = req.params;
@@ -129,7 +129,7 @@ class InstituteController {
     }
   }
 
-  // Delete institute (super_admin only - soft delete)
+  // Delete institute (admin only - soft delete)
   async deleteInstitute(req, res, next) {
     try {
       const { instituteId } = req.params;

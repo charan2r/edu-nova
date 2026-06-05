@@ -24,36 +24,16 @@ export function Sidebar() {
 
   // Menu items based on role
   const getNavItems = () => {
-    if (user?.role === "super_admin") {
+    if (user?.role === "admin") {
       return [
-        { href: "/super_admin", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
         {
-          href: "/super_admin/institutes",
+          href: "/admin/institutes",
           label: "Institutes",
           icon: Building2,
         },
-        {
-          href: "/super_admin/institute_admins",
-          label: "Institute Admins",
-          icon: Users,
-        },
-        { href: "/super_admin/analytics", label: "Analytics", icon: BarChart3 },
-      ];
-    } else if (user?.role === "institute_admin") {
-      return [
-        { href: "/institute_admin", label: "Dashboard", icon: LayoutDashboard },
-        {
-          href: "/institute_admin/instructors",
-          label: "Instructors",
-          icon: Users,
-        },
-        { href: "/institute_admin/courses", label: "Courses", icon: BookOpen },
-        { href: "/institute_admin/students", label: "Students", icon: Users },
-        {
-          href: "/institute_admin/analytics",
-          label: "Analytics",
-          icon: BarChart3,
-        },
+
+        { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
       ];
     }
     return [];
@@ -62,7 +42,7 @@ export function Sidebar() {
   const navItems = getNavItems();
 
   const isActive = (href: string) => {
-    if (href === "/super_admin" || href === "/institute_admin") {
+    if (href === "/admin") {
       return pathname === href;
     }
 
@@ -107,7 +87,7 @@ export function Sidebar() {
               Edu Nova
             </h1>
             <p className="text-xs text-sidebar-foreground/60 mt-1 capitalize">
-              {user?.role === "super_admin" ? "Super Admin" : "Institute Admin"}
+              Administrator
             </p>
           </div>
 

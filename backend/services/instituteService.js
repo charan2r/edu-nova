@@ -83,39 +83,6 @@ class InstituteService {
     return instituteRepository.delete(instituteId);
   }
 
-  // Assign institute_admin to an institute
-  async assignInstituteAdmin(instituteId, adminId, superAdminId) {
-    const institute = await instituteRepository.findById(instituteId);
-    if (!institute) {
-      throw new ValidationError("Institute not found");
-    }
-
-    const admin = await userRepository.findById(adminId);
-    if (!admin) {
-      throw new ValidationError("Admin user not found");
-    }
-
-    if (admin.role !== "institute_admin") {
-      throw new ValidationError("User is not an institute_admin");
-    }
-
-    // Ensure admin is assigned to this institute
-    await userRepository.update(adminId, { institute: instituteId });
-
-    // Update institute to reference the admin
-    return instituteRepository.update(instituteId, { admin: adminId });
-  }
-
-  // Remove institute_admin from an institute
-  async removeInstituteAdmin(instituteId) {
-    const institute = await instituteRepository.findById(instituteId);
-    if (!institute) {
-      throw new ValidationError("Institute not found");
-    }
-
-    return instituteRepository.update(instituteId, { admin: null });
-  }
-
   // Get institute admin details
   async getInstituteAdmin(instituteId) {
     const institute = await instituteRepository.findById(instituteId);

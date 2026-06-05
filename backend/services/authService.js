@@ -24,16 +24,6 @@ class AuthService {
       throw new ValidationError("Email is already registered");
     }
 
-    // institute_admin can only be created by super_admin
-    if (role === "institute_admin" && createdByRole !== "super_admin") {
-      throw new AuthError("Only super_admin can create institute admins");
-    }
-
-    // institute_admin must have instituteId
-    if (role === "institute_admin" && !instituteId) {
-      throw new ValidationError("Institute ID is required for institute_admin");
-    }
-
     // Instructors need to select an institute at registration
     if (role === "instructor" && !instituteId) {
       throw new ValidationError("Instructors must select an institute");
@@ -56,7 +46,7 @@ class AuthService {
       role,
     };
 
-    if (role === "instructor" || role === "institute_admin") {
+    if (role === "instructor") {
       userData.institute = instituteId;
     }
 
