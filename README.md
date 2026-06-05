@@ -15,8 +15,7 @@ A comprehensive **Software-as-a-Service (SaaS)** learning management platform bu
 
 Edu Nova follows a **multi-tenant SaaS architecture** with role-based access control:
 
-- **Super Admin**: Platform management and analytics
-- **Institute Admin**: Institution management, instructor oversight, analytics
+- **Admin**: Platform management, institute oversight, analytics, and instructor management
 - **Instructors**: Course creation, management, and student engagement
 - **Students**: Course enrollment, learning, and AI-powered recommendations
 
@@ -24,7 +23,7 @@ Edu Nova follows a **multi-tenant SaaS architecture** with role-based access con
 
 ### 🔐 **Authentication & Authorization**
 
-- Multi-role authentication (Student, Instructor, Institute Admin, Super Admin)
+- Multi-role authentication (Student, Instructor, Admin)
 - JWT-based secure authentication
 - Password encryption with bcrypt
 - Session management and token refresh
@@ -42,10 +41,9 @@ Edu Nova follows a **multi-tenant SaaS architecture** with role-based access con
 - Context-aware chat assistant for course guidance
 - Smart course suggestions based on user preferences and learning history
 
-### 📊 **Admin Dashboards**
+### 📊 **Admin Dashboard**
 
-- **Super Admin Portal**: Platform-wide analytics and institute management
-- **Institute Admin Portal**: Institution-specific KPIs, instructor management, student analytics
+- **Admin Portal**: Platform-wide analytics, institute management, instructor oversight, and student analytics
 
 ### 🎨 **User Experience**
 
