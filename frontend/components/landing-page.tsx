@@ -17,6 +17,7 @@ import {
   Sparkles,
   CheckCircle2,
 } from "lucide-react";
+import Footer from "./footer";
 
 const stats = [
   { label: "Active Students", value: "50,000+" },
@@ -237,21 +238,9 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card/50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <GraduationCap className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-lg font-bold">Edu Nova</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              2026 Edu Nova. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <div className="border-t border-border bg-card/20 py-2">
+        <Footer/>
+      </div>
     </div>
   );
 }

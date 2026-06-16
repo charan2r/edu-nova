@@ -20,7 +20,6 @@ import {
   LogOut,
   LayoutDashboard,
   BookOpen,
-  MessageSquare,
 } from "lucide-react";
 
 export function Navigation() {
@@ -28,7 +27,12 @@ export function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = [{ href: "/courses", label: "Courses" }];
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/courses", label: "Courses" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
 
   const dashboardLink =
     user?.role === "instructor"
@@ -37,7 +41,7 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <nav className="container mx-auto flex h-16 items-center justify-between px-4">
+      <nav className="flex h-16 w-full items-center justify-between px-10">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
@@ -119,9 +123,7 @@ export function Navigation() {
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" asChild>
-                <Link href="/login">Sign In</Link>
-              </Button>
+              
               <Button asChild>
                 <Link href="/register">Get Started</Link>
               </Button>
@@ -160,13 +162,7 @@ export function Navigation() {
             ))}
             {isAuthenticated ? (
               <>
-                <Link
-                  href="/ai-assistant"
-                  className="text-sm font-medium text-muted-foreground hover:text-primary"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  AI Assistant
-                </Link>
+                
                 <Link
                   href={dashboardLink}
                   className="text-sm font-medium text-muted-foreground hover:text-primary"
@@ -186,11 +182,7 @@ export function Navigation() {
               </>
             ) : (
               <div className="flex flex-col gap-2">
-                <Button variant="ghost" asChild>
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    Sign In
-                  </Link>
-                </Button>
+                
                 <Button asChild>
                   <Link
                     href="/register"
