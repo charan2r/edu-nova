@@ -30,8 +30,8 @@ export function Navigation() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/courses", label: "Courses" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/#", label: "About" },
+    { href: "/#", label: "Contact" },
   ];
 
   const dashboardLink =

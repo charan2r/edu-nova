@@ -15,16 +15,6 @@ const instituteSchema = new mongoose.Schema(
       country: String,
       zipCode: String,
     },
-    admin: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    instructors: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
   },
@@ -32,3 +22,4 @@ const instituteSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Institute", instituteSchema);
+

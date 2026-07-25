@@ -1,76 +1,51 @@
-# 🎓 Edu Nova - Learning Management System
+# 🎓 Edu Nova — Learning Management System
 
-A comprehensive **Software-as-a-Service (SaaS)** learning management platform built with modern web technologies. Edu Nova enables institutes to manage their online courses, instructors, and students at scale with features including AI-powered recommendations, multi-tenant architecture, and comprehensive admin dashboards.
+A full-stack LMS where institutes can manage courses, instructors, and students. Includes AI-powered course recommendations and a dedicated admin dashboard.
 
-## 📦 Tech Stack
+---
 
-- **Frontend**: Next.js, TypeScript, Tailwind CSS
-- **Backend**: Node.js, Express.js, MongoDB
-- **Authentication**: JWT (JSON Web Tokens), Bcrypt Password Hashing
-- **AI & ML**: Groq SDK for intelligent recommendations
-- **Media Management**: ImageKit for image optimization and hosting
-- **DevOps**: Docker, Docker Compose
+## Tech Stack
 
-## 🏗️ Architecture
+| Layer       | Technology                            |
+| ----------- | ------------------------------------- |
+| Frontend    | Next.js 16, TypeScript, Tailwind CSS  |
+| Admin Panel | Next.js 16, TypeScript, Tailwind CSS  |
+| Backend     | Node.js, Express.js                   |
+| Database    | MongoDB (Mongoose)                    |
+| Auth        | JWT (access + refresh tokens), bcrypt |
+| AI          | Groq SDK — Llama 3.3-70B              |
+| Media       | ImageKit CDN                          |
+| Deployment  | Docker, Docker Compose, Nginx         |
 
-Edu Nova follows a **multi-tenant SaaS architecture** with role-based access control:
+---
 
-- **Admin**: Platform management, institute oversight, analytics, and instructor management
-- **Instructors**: Course creation, management, and student engagement
-- **Students**: Course enrollment, learning, and AI-powered recommendations
+## User Roles
 
-## 🧩 Core Features
+| Role           | Capabilities                                                      |
+| -------------- | ----------------------------------------------------------------- |
+| **Admin**      | Manage institutes, users, and all courses via the admin dashboard |
+| **Instructor** | Create and manage their own courses; view enrolled students       |
+| **Student**    | Browse courses, enroll/unenroll, get AI recommendations           |
 
-### 🔐 **Authentication & Authorization**
+---
 
-- Multi-role authentication (Student, Instructor, Admin)
-- JWT-based secure authentication
-- Password encryption with bcrypt
-- Session management and token refresh
-
-### 📚 **Course Management**
-
-- Instructors can create, update, and manage courses
-- Course categorization and organization
-- Student enrollment tracking
-- Course search and filtering capabilities
-
-### 🤖 **AI-Powered Intelligence**
-
-- Personalized course recommendations using Groq API
-- Context-aware chat assistant for course guidance
-- Smart course suggestions based on user preferences and learning history
-
-### 📊 **Admin Dashboard**
-
-- **Admin Portal**: Platform-wide analytics, institute management, instructor oversight, and student analytics
-
-### 🎨 **User Experience**
-
-- Responsive design for all devices
-- Modern, intuitive UI with Radix components
-- Dark mode support with theme switching
-
-## � Quick Start
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
 - MongoDB (local or Atlas)
-- Docker & Docker Compose (for containerized deployment)
-- Git
+- Docker & Docker Compose (for production deployment)
 
 ### Environment Variables
 
-Create `.env` files in respective directories:
-
-#### Backend `.env` (`backend/.env`)
+**`backend/.env`**
 
 ```env
 PORT=5000
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/edu-nova
-JWT_SECRET=your_super_secret_jwt_key_change_in_production
-JWT_EXPIRES_IN=7d
+JWT_SECRET=your_jwt_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
 
 FRONTEND_URL=http://localhost:3000
 ADMIN_URL=http://localhost:3001
@@ -84,132 +59,121 @@ IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
 NODE_ENV=development
 ```
 
-#### Frontend `.env.local` (`frontend/.env.local`)
+**`frontend/.env.local`**
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 ```
 
-#### Admin `.env.local` (`admin/.env.local`)
+**`admin/.env.local`**
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 ```
 
-### Installation & Setup
-
-#### 1. Clone the repository
+### Running Locally
 
 ```bash
-git clone <repository-url>
-cd edu-nova
+# Backend (port 5000)
+cd backend && npm install && npm run dev
+
+# Frontend — Students & Instructors (port 3000)
+cd frontend && npm install && npm run dev
+
+# Admin Dashboard (port 3001)
+cd admin && npm install && npm run dev
 ```
 
-#### 2. Backend Setup
+Seed the database with sample data (optional):
 
 ```bash
-cd backend
-npm install
+cd backend && npm run seed
 ```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Or run in production mode:
-
-```bash
-npm start
-```
-
-Seed the database (optional):
-
-```bash
-npm run seed
-```
-
-Backend runs on: `http://localhost:5000`
-
-#### 3. Frontend Setup (Student Portal)
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend runs on: `http://localhost:3000`
-
-#### 4. Admin Dashboard Setup
-
-```bash
-cd admin
-npm install
-npm run dev
-```
-
-Admin dashboard runs on: `http://localhost:3001`
 
 ### Docker Deployment
-
-Deploy all services with Docker Compose:
 
 ```bash
 docker-compose up --build
 ```
 
-## 🔌 API Endpoints
+Nginx serves the frontend on port `80` and proxies `/api/*` to the backend.
 
-All endpoints are prefixed with `/api/v1`
+---
+
+## API Overview
+
+Base URL: `http://localhost:5000/api/v1`  
+Full reference: [`api-documentation.md`](./api-documentation.md)
 
 ### Authentication
 
-| Method | Endpoint         | Description                              | Auth Required |
-| ------ | ---------------- | ---------------------------------------- | ------------- |
-| POST   | `/auth/register` | Register a new user (student/instructor) | No            |
-| POST   | `/auth/login`    | Login user and receive JWT token         | No            |
-| POST   | `/auth/refresh`  | Refresh access token                     | Yes           |
-| POST   | `/auth/logout`   | Logout user and invalidate token         | Yes           |
+| Method | Endpoint         | Auth | Description                    |
+| ------ | ---------------- | ---- | ------------------------------ |
+| POST   | `/auth/register` | No   | Register student or instructor |
+| POST   | `/auth/login`    | No   | Login and receive JWT tokens   |
+| POST   | `/auth/refresh`  | No   | Get a new access token         |
+| POST   | `/auth/logout`   | No\* | Invalidate refresh token       |
+
+\*Requires `user-id` header.
 
 ### Courses
 
-| Method | Endpoint                | Description                                | Auth Required |
-| ------ | ----------------------- | ------------------------------------------ | ------------- |
-| GET    | `/course/`              | Get all courses (paginated)                | Yes           |
-| GET    | `/course/search/:query` | Search courses by title/description        | Yes           |
-| GET    | `/course/enrolled`      | Get student's enrolled courses             | Yes           |
-| GET    | `/course/my-courses`    | Get instructor's created courses           | Yes           |
-| GET    | `/course/:id`           | Get course details                         | Yes           |
-| GET    | `/course/:id/students`  | Get students in a course (instructor only) | Yes           |
-| POST   | `/course/`              | Create a new course (instructor only)      | Yes           |
-| POST   | `/course/:id/enroll`    | Enroll in a course                         | Yes           |
-| PUT    | `/course/:id`           | Update course (instructor only)            | Yes           |
-| DELETE | `/course/:id`           | Delete course (instructor only)            | Yes           |
+| Method | Endpoint                  | Auth          | Description                         |
+| ------ | ------------------------- | ------------- | ----------------------------------- |
+| GET    | `/course`                 | Public        | List all courses (paginated)        |
+| GET    | `/course/search/query?q=` | 🔒            | Search courses by keyword           |
+| GET    | `/course/enrolled`        | 🔒            | Student's enrolled courses          |
+| GET    | `/course/my-courses`      | 🔒 instructor | Instructor's created courses        |
+| GET    | `/course/:id`             | 🔒            | Single course details               |
+| GET    | `/course/:id/students`    | 🔒 instructor | Students enrolled in a course       |
+| POST   | `/course`                 | 🔒 instructor | Create a course (with image upload) |
+| POST   | `/course/:id/enroll`      | 🔒            | Enroll in a course                  |
+| POST   | `/course/:id/unenroll`    | 🔒            | Unenroll from a course              |
+| PUT    | `/course/:id`             | 🔒 instructor | Update own course                   |
+| DELETE | `/course/:id`             | 🔒 instructor | Delete own course                   |
 
-### Institutes (Admin Only)
+### Chat / AI
 
-| Method | Endpoint         | Description                   | Auth Required |
-| ------ | ---------------- | ----------------------------- | ------------- |
-| GET    | `/institute/`    | Get all institutes            | Yes           |
-| GET    | `/institute/:id` | Get institute details         | Yes           |
-| POST   | `/institute/`    | Create new institute          | Yes           |
-| PUT    | `/institute/:id` | Update institute (admin only) | Yes           |
-| DELETE | `/institute/:id` | Delete institute (admin only) | Yes           |
+| Method | Endpoint                | Auth | Description                       |
+| ------ | ----------------------- | ---- | --------------------------------- |
+| POST   | `/chat/recommendations` | 🔒   | AI-powered course recommendations |
 
-### Chat & Recommendations
+### Admin
 
-| Method | Endpoint                | Description                           | Auth Required |
-| ------ | ----------------------- | ------------------------------------- | ------------- |
-| POST   | `/chat/recommendations` | Get AI-powered course recommendations | Yes           |
+| Method | Endpoint                  | Auth     | Description                        |
+| ------ | ------------------------- | -------- | ---------------------------------- |
+| GET    | `/admin/institutes`       | 🔒 admin | List all institutes                |
+| GET    | `/admin/institutes/:id`   | 🔒 admin | Get single institute               |
+| POST   | `/admin/institutes`       | 🔒 admin | Create institute                   |
+| PUT    | `/admin/institutes/:id`   | 🔒 admin | Update institute                   |
+| DELETE | `/admin/institutes/:id`   | 🔒 admin | Soft-delete institute              |
+| GET    | `/admin/users`            | 🔒 admin | List all users (`?role=` optional) |
+| PATCH  | `/admin/users/:id/toggle` | 🔒 admin | Toggle user active status          |
+| GET    | `/admin/courses`          | 🔒 admin | List all platform courses          |
+| DELETE | `/admin/courses/:id`      | 🔒 admin | Force-delete any course            |
 
-## 🤖 AI Features
+---
 
-### Personalized Course Recommendations
+## AI Recommendations
 
-The platform uses Groq API to provide context-aware course recommendations:
+Students can chat with the built-in AI advisor:
 
-- **Student Input**: "Show me courses for web development"
-- **AI Analysis**: Analyzes course descriptions, user preferences, and learning history
-- **Smart Recommendations**: Returns relevant courses with explanations
+1. Student types a query: _"I want to learn web development from scratch"_
+2. Groq (Llama 3.3-70B) generates a personalized response
+3. Keywords are extracted and used to query the course catalog
+4. The response includes both the AI message and matching courses
+
+---
+
+## Project Structure
+
+```
+edu-nova/
+  backend/          Node.js + Express REST API
+  frontend/         Next.js app for students & instructors
+  admin/            Next.js admin dashboard
+  docker-compose.yml
+  default.conf      Nginx config
+  api-documentation.md
+  architecture.md
+```

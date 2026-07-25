@@ -3,7 +3,6 @@ const Institute = require("../models/Institute");
 class InstituteRepository {
   async findById(id) {
     return Institute.findById(id)
-      .populate("admin", "fullname email")
       .populate("instructors", "fullname email role")
       .lean();
   }
@@ -14,7 +13,7 @@ class InstituteRepository {
 
   async findAll() {
     return Institute.find({ isDeleted: false })
-      .select("name email logo description isActive")
+      .select("name email logo description isActive createdAt")
       .lean();
   }
 
@@ -25,28 +24,6 @@ class InstituteRepository {
 
   async update(id, instituteData) {
     return Institute.findByIdAndUpdate(id, instituteData, { new: true });
-  }
-
-  async addInstructor(instituteId, instructorId) {
-    return Institute.findByIdAndUpdate(
-      instituteId,
-      { $addToSet: { instructors: instructorId } },
-      { new: true },
-    ).populate("instructors", "fullname email");
-  }
-
-  async removeInstructor(instituteId, instructorId) {
-    return Institute.findByIdAndUpdate(
-      instituteId,
-      { $pull: { instructors: instructorId } },
-      { new: true },
-    ).populate("instructors", "fullname email");
-  }
-
-  async getInstructors(instituteId) {
-    return Institute.findById(instituteId)
-      .select("instructors")
-      .populate("instructors", "fullname email role");
   }
 
   async delete(id) {

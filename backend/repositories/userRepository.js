@@ -18,6 +18,14 @@ class UserRepository {
     return User.findByIdAndUpdate(id, userData, { new: true });
   }
 
+  // Find all non-deleted users 
+  async findAll() {
+    return User.find({ isDeleted: false })
+      .populate("institute", "name")
+      .select("fullname email role institute isActive createdAt")
+      .lean();
+  }
+
   async findByInstituteAndRole(instituteId, role) {
     return User.find({
       institute: instituteId,
@@ -32,7 +40,8 @@ class UserRepository {
       isDeleted: false,
     })
       .populate("institute", "name")
-      .select("fullname email role institute createdAt isActive");
+      .select("fullname email role institute createdAt isActive")
+      .lean();
   }
 }
 

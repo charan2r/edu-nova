@@ -1,6 +1,5 @@
 const instituteRepository = require("../repositories/instituteRepository");
-const userRepository = require("../repositories/userRepository");
-const { ValidationError, AuthError } = require("../utils/errors");
+const { ValidationError } = require("../utils/errors");
 
 class InstituteService {
   // Create a new institute
@@ -11,7 +10,6 @@ class InstituteService {
     if (existingInstitute) {
       throw new ValidationError("Institute name already exists");
     }
-
     return instituteRepository.create(instituteData);
   }
 
@@ -38,63 +36,10 @@ class InstituteService {
     return institute;
   }
 
-  // Add instructor to institute (admin adds instructor)
-  async addInstructorToInstitute(instituteId, instructorId) {
-    const institute = await instituteRepository.findById(instituteId);
-    if (!institute) {
-      throw new ValidationError("Institute not found");
-    }
-
-    const instructor = await userRepository.findById(instructorId);
-    if (!instructor) {
-      throw new ValidationError("Instructor not found");
-    }
-
-    if (instructor.role !== "instructor") {
-      throw new ValidationError("User is not an instructor");
-    }
-
-    // Update instructor's institute reference
-    await userRepository.update(instructorId, { institute: instituteId });
-
-    return instituteRepository.addInstructor(instituteId, instructorId);
-  }
-
-  // Remove instructor from institute
-  async removeInstructorFromInstitute(instituteId, instructorId) {
-    const institute = await instituteRepository.findById(instituteId);
-    if (!institute) {
-      throw new ValidationError("Institute not found");
-    }
-
-    // Clear instructor's institute reference
-    await userRepository.update(instructorId, { institute: null });
-
-    return instituteRepository.removeInstructor(instituteId, instructorId);
-  }
-
-  // Get all instructors in an institute
-  async getInstituteInstructors(instituteId) {
-    return instituteRepository.getInstructors(instituteId);
-  }
-
-  // Delete an institute
+  // Soft-delete an institute
   async deleteInstitute(instituteId) {
     return instituteRepository.delete(instituteId);
   }
-
-  // Get institute admin details
-  async getInstituteAdmin(instituteId) {
-    const institute = await instituteRepository.findById(instituteId);
-    if (!institute) {
-      throw new ValidationError("Institute not found");
-    }
-
-    if (!institute.admin) {
-      return null;
-    }
-
-    return userRepository.findById(institute.admin);
-  }
 }
+
 module.exports = new InstituteService();
