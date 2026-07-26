@@ -12,14 +12,12 @@
 
 Register a new user. No auth required.
 
-| Field             | Type   | Required | Notes                                    |
-| ----------------- | ------ | -------- | ---------------------------------------- |
-| `fullname`        | string | Yes      |                                          |
-| `email`           | string | Yes      | Must be unique                           |
-| `password`        | string | Yes      |                                          |
-| `confirmPassword` | string | Yes      | Must match `password`                    |
-| `role`            | string | Yes      | `"student"` / `"instructor"` / `"admin"` |
-| `instituteId`     | string | Cond.    | Required if role is `"instructor"`       |
+| Field             | Type   | Required | Notes                 |
+| ----------------- | ------ | -------- | --------------------- |
+| `fullname`        | string | Yes      |                       |
+| `email`           | string | Yes      | Must be unique        |
+| `password`        | string | Yes      |                       |
+| `confirmPassword` | string | Yes      | Must match `password` |
 
 ```json
 // 201

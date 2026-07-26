@@ -204,6 +204,108 @@ class InstituteController {
       next(error);
     }
   }
+
+
+  // Get instructors already in an institute
+  async getInstituteInstructors(req, res, next) {
+    try {
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      const { instituteId } = req.params;
+      const instructors = await userRepository.findByInstitute(instituteId);
+      return res.json({ data: instructors });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Get instructors not yet assigned to any institute
+  async getUnassignedInstructors(req, res, next) {
+    try {
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      const instructors = await userRepository.findUnassignedInstructors();
+      return res.json({ data: instructors });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Assign instructor to institute 
+  async assignInstructor(req, res, next) {
+    try {
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const { instituteId } = req.params;
+      const { instructorId } = req.body;
+
+      if (!instructorId) {
+        return res.status(400).json({ message: "instructorId is required" });
+      }
+
+      // Verify instructor exists and is actually an instructor
+      const instructor = await userRepository.findById(instructorId);
+      if (!instructor) {
+        return res.status(404).json({ message: "Instructor not found" });
+      }
+      if (instructor.role !== "instructor") {
+        return res.status(400).json({ message: "User is not an instructor" });
+      }
+
+      // 1. Set instructor's institute
+      await userRepository.update(instructorId, { institute: instituteId });
+
+      // 2. Cascade: set institute on all courses created by this instructor
+      await courseRepository.setInstituteByInstructor(instructorId, instituteId);
+
+      // 3. Cascade: set institute on all students enrolled in those courses
+      const studentIds = await courseRepository.getStudentIdsByInstructor(instructorId);
+      if (studentIds.length > 0) {
+        await userRepository.bulkSetInstitute(studentIds, instituteId);
+      }
+
+      return res.json({
+        message: "Instructor assigned successfully",
+        cascaded: {
+          coursesUpdated: true,
+          studentsUpdated: studentIds.length,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Remove instructor from institute 
+  async removeInstructor(req, res, next) {
+    try {
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const { instructorId } = req.params;
+
+      const instructor = await userRepository.findById(instructorId);
+      if (!instructor) {
+        return res.status(404).json({ message: "Instructor not found" });
+      }
+
+      // 1. Clear instructor's institute
+      await userRepository.update(instructorId, { institute: null });
+
+      // 2. Reverse cascade: remove institute from their courses
+      await courseRepository.clearInstituteByInstructor(instructorId);
+
+      return res.json({ message: "Instructor removed from institute" });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new InstituteController();
+

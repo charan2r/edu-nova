@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { instituteApi } from "@/lib/api-client";
 
 export default function CreateInstituteForm() {
   const router = useRouter();
@@ -62,30 +63,14 @@ export default function CreateInstituteForm() {
         return;
       }
 
-      const token = localStorage.getItem("adminToken");
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/institute`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Failed to create institute");
-      }
+      await instituteApi.create(formData);
 
       setSuccess("Institute created successfully!");
       setTimeout(() => {
         router.push("/admin/institutes");
       }, 1500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+    } catch (err: any) {
+      setError(err.message ?? "An error occurred");
     } finally {
       setLoading(false);
     }

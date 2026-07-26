@@ -90,14 +90,14 @@ class CourseRepository {
   }
 
   async countTotalCourses() {
-    return Course.countDocuments({ isDeleted: false });
+    return Course.countDocuments({ isDeleted: { $ne: true } });
   }
 
   async findCoursesBySearchTerm(searchTerm, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     return Course.find({
       $and: [
-        { isDeleted: false },
+        { isDeleted: { $ne: true } },
         {
           $or: [
             { name: { $regex: searchTerm, $options: "i" } },
@@ -116,11 +116,34 @@ class CourseRepository {
   async findByInstitute(instituteId) {
     return Course.find({
       institute: instituteId,
-      isDeleted: false,
+      isDeleted: { $ne: true },
     })
       .populate("instructor", "fullname email")
       .populate("institute", "name email logo")
       .lean();
+  }
+
+ 
+  async setInstituteByInstructor(instructorId, instituteId) {
+    return Course.updateMany(
+      { instructor: instructorId },
+      { $set: { institute: instituteId } },
+    );
+  }
+
+ 
+  async clearInstituteByInstructor(instructorId) {
+    return Course.updateMany(
+      { instructor: instructorId },
+      { $unset: { institute: "" } },
+    );
+  }
+
+  
+  async getStudentIdsByInstructor(instructorId) {
+    const courses = await Course.find({ instructor: instructorId }).select("students").lean();
+    const allStudentIds = courses.flatMap((c) => c.students.map((id) => id.toString()));
+    return [...new Set(allStudentIds)];
   }
 }
 

@@ -27,13 +27,9 @@ export function Sidebar() {
     if (user?.role === "admin") {
       return [
         { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-        {
-          href: "/admin/institutes",
-          label: "Institutes",
-          icon: Building2,
-        },
-
-        { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+        { href: "/admin/institutes", label: "Institutes", icon: Building2 },
+        { href: "/admin/users", label: "Users", icon: Users },
+        { href: "/admin/courses", label: "Courses", icon: BookOpen },
       ];
     }
     return [];

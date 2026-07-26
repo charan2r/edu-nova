@@ -18,9 +18,9 @@ class UserRepository {
     return User.findByIdAndUpdate(id, userData, { new: true });
   }
 
-  // Find all non-deleted users 
+  // Find all non-deleted users
   async findAll() {
-    return User.find({ isDeleted: false })
+    return User.find({ isDeleted: { $ne: true } })
       .populate("institute", "name")
       .select("fullname email role institute isActive createdAt")
       .lean();
@@ -35,13 +35,40 @@ class UserRepository {
   }
 
   async findByRole(role) {
-    return User.find({
-      role: role,
-      isDeleted: false,
-    })
+    return User.find({ role, isDeleted: { $ne: true } })
       .populate("institute", "name")
       .select("fullname email role institute createdAt isActive")
       .lean();
+  }
+
+  
+  async findUnassignedInstructors() {
+    return User.find({
+      role: "instructor",
+      isDeleted: { $ne: true },
+      $or: [{ institute: null }, { institute: { $exists: false } }],
+    })
+      .select("fullname email role createdAt")
+      .lean();
+  }
+
+
+  async findByInstitute(instituteId) {
+    return User.find({
+      institute: instituteId,
+      role: "instructor",
+      isDeleted: { $ne: true },
+    })
+      .select("fullname email role createdAt")
+      .lean();
+  }
+
+  
+  async bulkSetInstitute(userIds, instituteId) {
+    return User.updateMany(
+      { _id: { $in: userIds }, isDeleted: false },
+      { $set: { institute: instituteId } },
+    );
   }
 }
 

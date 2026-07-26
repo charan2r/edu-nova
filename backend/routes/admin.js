@@ -35,4 +35,17 @@ router.get("/courses", instituteController.getAllCourses.bind(instituteControlle
 // DELETE any course
 router.delete("/courses/:courseId", instituteController.deleteCourse.bind(instituteController));
 
+// GET instructors of a specific institute
+router.get("/institutes/:instituteId/instructors", instituteController.getInstituteInstructors.bind(instituteController));
+
+// GET all unassigned instructors (for dropdown)
+router.get("/instructors/unassigned", instituteController.getUnassignedInstructors.bind(instituteController));
+
+// POST assign instructor to institute 
+router.post("/institutes/:instituteId/instructors", instituteController.assignInstructor.bind(instituteController));
+
+// DELETE remove instructor from institute
+router.delete("/instructors/:instructorId/unassign", instituteController.removeInstructor.bind(instituteController));
+
 module.exports = router;
+

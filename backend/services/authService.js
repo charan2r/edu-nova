@@ -24,11 +24,6 @@ class AuthService {
       throw new ValidationError("Email is already registered");
     }
 
-    // Instructors need to select an institute at registration
-    if (role === "instructor" && !instituteId) {
-      throw new ValidationError("Instructors must select an institute");
-    }
-
     // Validate institute exists if provided
     if (instituteId) {
       const institute = await instituteRepository.findById(instituteId);
@@ -44,11 +39,8 @@ class AuthService {
       email,
       password: hashedPassword,
       role,
+      ...(instituteId ? { institute: instituteId } : {}),
     };
-
-    if (role === "instructor") {
-      userData.institute = instituteId;
-    }
 
     return userRepository.create(userData);
   }

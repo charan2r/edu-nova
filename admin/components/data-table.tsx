@@ -8,7 +8,7 @@ interface Column {
   key: string;
   label: string;
   width?: string;
-  render?: (value: any) => React.ReactNode;
+  render?: (value: any, row: any) => React.ReactNode;
 }
 
 interface DataTableProps {
@@ -155,7 +155,7 @@ export const DataTable = memo(function DataTable({
                           col.width,
                         )}
                       >
-                        {col.render ? col.render(row[col.key]) : row[col.key]}
+                        {col.render ? col.render(row[col.key], row) : row[col.key]}
                       </td>
                     ))}
                   </tr>
