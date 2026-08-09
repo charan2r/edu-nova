@@ -5,98 +5,89 @@ const groq = new Groq({
   timeout: 20000, // 20 second timeout
 });
 
-const SYSTEM_PROMPT = `You are an AI Course Advisor for Edu Nova, an online learning platform specializing in IT courses.
+async function getCourseRecommendations(userInput, availableCourses = []) {
+  try {
+    // Format available courses catalog for the system prompt
+    let courseCatalogText = "";
+    if (availableCourses && availableCourses.length > 0) {
+      courseCatalogText = availableCourses
+        .map((c, index) => {
+          const id = c._id ? c._id.toString() : index;
+          const title = c.name || "Untitled Course";
+          const category = c.category || "General";
+          const level = c.level || "all levels";
+          const desc = (c.description || "").slice(0, 150);
+          const price = c.subscription?.isFree ? "Free" : `$${c.subscription?.price || 0}`;
+          return `ID: ${id} | Title: "${title}" | Category: ${category} | Level: ${level} | Price: ${price} | Description: ${desc}`;
+        })
+        .join("\n");
+    }
 
-Your role is to help students find the perfect courses based on their:
-- Current skill level (beginner, intermediate, advanced)
-- Learning goals and career aspirations
-- Areas of interest (web development, data science, cloud computing, cybersecurity, etc.)
-- Time availability
+    const systemPrompt = `You are an AI Course Advisor for Edu Nova, an online learning platform specializing in IT courses.
 
-Available course categories include:
-- Web Development (React, Node.js, Full Stack)
-- Data Science (Python, Machine Learning, Data Analysis)
-- Cloud Computing (AWS, Azure, Google Cloud)
-- Cybersecurity (Ethical Hacking, Network Security)
-- DevOps (Docker, Kubernetes, CI/CD)
-- Mobile Development (React Native, iOS, Android)
+Your role is to help students find the best matching courses from our database based on their skill level, learning goals, time availability, and interests.
 
-When recommending courses:
-1. Ask clarifying questions to understand the student's needs
-2. Provide personalized recommendations with reasoning
-3. Explain learning paths and course sequences
-4. Mention prerequisites when relevant
-5. Be encouraging and supportive
-
-Keep responses concise but helpful. Use bullet points for clarity when listing multiple items.`;
-
-// Extract keywords for database search
-function extractKeywords(text) {
-  const keywords = [
-    "python",
-    "javascript",
-    "react",
-    "node",
-    "java",
-    "web",
-    "data",
-    "science",
-    "cloud",
-    "aws",
-    "azure",
-    "devops",
-    "docker",
-    "kubernetes",
-    "cybersecurity",
-    "security",
-    "frontend",
-    "backend",
-    "fullstack",
-    "mobile",
-    "sql",
-    "database",
-    "api",
-    "machine",
-    "ai",
-    "ml",
-  ];
-
-  const lowerText = text.toLowerCase();
-  return keywords.filter((keyword) => lowerText.includes(keyword));
+${
+  courseCatalogText
+    ? `Here are the AVAILABLE COURSES currently in our database:\n${courseCatalogText}\n`
+    : "Currently no database courses catalog provided."
 }
 
-async function getCourseRecommendations(userInput) {
-  try {
-    // Get AI-generated response with intelligent recommendations
+INSTRUCTIONS FOR YOUR RESPONSE:
+1. Recommend specific courses from the AVAILABLE COURSES list above that match the student's request.
+2. Be helpful, concise, and explain why the recommended courses fit their goals.
+3. You MUST format your final response as a JSON object with two fields:
+   - "message": (string) Your response text explaining the recommendations to the student.
+   - "recommendedCourseIds": (array of strings) The exact ID strings of the courses from the AVAILABLE COURSES list that you recommend (max 5 courses).
+
+Example JSON response format:
+{
+  "message": "Based on your interest in web development, I recommend...",
+  "recommendedCourseIds": ["64a1f...", "64a2b..."]
+}`;
+
     const chatCompletion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",
-          content: SYSTEM_PROMPT,
+          content: systemPrompt,
         },
         {
           role: "user",
           content: userInput,
         },
       ],
-      max_tokens: 600,
+      max_tokens: 700,
       temperature: 0.7,
+      response_format: { type: "json_object" },
     });
 
-    const content = chatCompletion?.choices?.[0]?.message?.content;
+    const rawContent = chatCompletion?.choices?.[0]?.message?.content;
 
-    if (!content) {
+    if (!rawContent) {
       console.error("Invalid response from Groq:", chatCompletion);
       throw new Error("No content returned by Groq");
     }
 
-    // Extract keywords for database search
-    const keywords = extractKeywords(userInput);
+    let parsedResult = { message: "", recommendedCourseIds: [] };
+
+    try {
+      parsedResult = JSON.parse(rawContent);
+    } catch (parseErr) {
+      // Fallback if response format JSON parser fails
+      console.warn("Could not parse Groq JSON, using raw text:", parseErr);
+      parsedResult = {
+        message: rawContent,
+        recommendedCourseIds: [],
+      };
+    }
 
     return {
-      message: content,
-      keywords: keywords,
+      message: parsedResult.message || rawContent,
+      recommendedCourseIds: Array.isArray(parsedResult.recommendedCourseIds)
+        ? parsedResult.recommendedCourseIds
+        : [],
     };
   } catch (err) {
     console.error("Error fetching course recommendations:", err);

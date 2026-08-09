@@ -13,23 +13,34 @@ router.post("/recommendations", middleware, async (req, res) => {
   }
 
   try {
-    // Get AI-generated recommendations from the chat service
-    const result = await getCourseRecommendations(userInput);
+    // Fetch courses from MongoDB
+    const availableCourses = await Course.find({ isDeleted: { $ne: true } })
+      .populate("instructor", "fullname email")
+      .populate("institute", "name logo")
+      .lean();
 
-    const keywords = result.keywords || [];
+    // Get AI recommendations using current database catalog
+    const result = await getCourseRecommendations(userInput, availableCourses);
+
+    const recommendedCourseIds = result.recommendedCourseIds || [];
     const aiMessage = result.message || "";
 
-    // Build search query only if keywords exist
-    let recommendedCourses = [];
-    if (keywords && keywords.length > 0) {
-      const regexArray = keywords.flatMap((keyword) => [
-        { name: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
-        { content: { $regex: keyword, $options: "i" } },
-      ]);
+    const courseMap = new Map();
+    availableCourses.forEach((c) => {
+      courseMap.set(c._id.toString(), c);
+    });
 
-      recommendedCourses = await Course.find({ $or: regexArray }).limit(10);
-    }
+    const recommendedCourses = [];
+    const addedIds = new Set();
+
+    // Add courses selected by AI
+    recommendedCourseIds.forEach((id) => {
+      const idStr = id.toString();
+      if (courseMap.has(idStr) && !addedIds.has(idStr)) {
+        recommendedCourses.push(courseMap.get(idStr));
+        addedIds.add(idStr);
+      }
+    });
 
     // Return AI message + found courses
     res.status(200).json({
@@ -40,7 +51,7 @@ router.post("/recommendations", middleware, async (req, res) => {
   } catch (error) {
     console.error("Error in chat route:", error);
 
-    if (error.message.includes("Input")) {
+    if (error.message && error.message.includes("Input")) {
       return res.status(400).json({ message: error.message });
     }
 
@@ -49,3 +60,5 @@ router.post("/recommendations", middleware, async (req, res) => {
 });
 
 module.exports = router;
+
+
