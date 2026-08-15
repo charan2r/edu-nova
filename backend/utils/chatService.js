@@ -23,7 +23,7 @@ async function getCourseRecommendations(userInput, availableCourses = []) {
         .join("\n");
     }
 
-    const systemPrompt = `You are an AI Course Advisor for Edu Nova, an online learning platform specializing in IT courses.
+    const systemPrompt = `You are an AI Course Advisor Assistant for Edu Nova, an online learning platform specializing in IT courses.
 
 Your role is to help students find the best matching courses from our database based on their skill level, learning goals, time availability, and interests.
 
@@ -47,7 +47,7 @@ Example JSON response format:
 }`;
 
     const chatCompletion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       messages: [
         {
           role: "system",
