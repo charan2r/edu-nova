@@ -294,6 +294,103 @@ Get AI-powered course recommendations. Uses **Groq (Llama 3.3-70B)** to generate
 
 ---
 
+## Adaptive Learning Path `/learning-path`
+
+### POST `/learning-path/generate` 🔒
+
+Generate a personalized, prerequisite-ordered learning path using Groq AI and catalog topological sequencing.
+
+| Field             | Type     | Required | Description                                                   |
+| ----------------- | -------- | -------- | ------------------------------------------------------------- |
+| `careerGoal`      | string   | Yes      | Target role/goal (e.g. `"Full Stack Developer"`)              |
+| `currentSkills`   | string[] | No       | List of current skills (e.g. `["html", "css", "javascript"]`) |
+| `experienceLevel` | string   | No       | `"beginner"` / `"intermediate"` / `"advanced"` (default: beg) |
+| `weeklyHours`     | number   | No       | Weekly study hours commitment (default: `10`)                 |
+
+```json
+// 201 Created
+{
+  "status": "created",
+  "summary": "This path takes you from basic web fundamentals to advanced full-stack engineering...",
+  "learningPath": {
+    "_id": "64a9f...",
+    "title": "Full Stack Web Development Path",
+    "careerGoal": "Full Stack Developer",
+    "weeklyHours": 10,
+    "estimatedWeeks": 12,
+    "missingSkills": ["react", "node.js", "mongodb"],
+    "steps": [
+      {
+        "_id": "64a9f1...",
+        "order": 1,
+        "title": "React Frontend Mastery",
+        "reason": "Closes frontend skill gap and prepares for full stack projects.",
+        "skillsGained": ["react", "redux"],
+        "estimatedHours": 20,
+        "status": "available"
+      },
+      {
+        "_id": "64a9f2...",
+        "order": 2,
+        "title": "Node.js & Express APIs",
+        "reason": "Teaches server development after UI principles are mastered.",
+        "skillsGained": ["node.js", "express"],
+        "estimatedHours": 25,
+        "status": "locked"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### GET `/learning-path/my-path` 🔒
+
+Get the authenticated student's current active adaptive learning path populated with course metadata.
+
+```json
+// 200
+{
+  "learningPath": {
+    "_id": "64a9f...",
+    "title": "Full Stack Web Development Path",
+    "steps": [...]
+  }
+}
+```
+
+---
+
+### PATCH `/learning-path/step/:stepId` 🔒
+
+Update milestone step status (e.g. marking as `completed`). Automatically unlocks the subsequent step in the sequence.
+
+| Field    | Type   | Required | Description                                                              |
+| -------- | ------ | -------- | ------------------------------------------------------------------------ |
+| `status` | string | No       | `"completed"` / `"in-progress"` / `"available"` (default: `"completed"`) |
+
+```json
+// 200
+{
+  "message": "Step updated successfully",
+  "learningPath": { ... }
+}
+```
+
+---
+
+### DELETE `/learning-path/my-path` 🔒
+
+Reset the student's current learning path to allow generating a fresh one.
+
+```json
+// 200
+{ "message": "Learning paths reset successfully" }
+```
+
+---
+
 ## Admin `/admin`
 
 All admin endpoints require a Bearer token and `role: "admin"`.
