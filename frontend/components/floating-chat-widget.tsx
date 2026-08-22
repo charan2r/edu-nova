@@ -157,11 +157,32 @@ export function FloatingChatWidget() {
             {/* Messages */}
             <div className="flex-1 space-y-2 overflow-y-auto mb-3">
               {messages.length === 0 ? (
-                <div className="flex h-full flex-col items-center justify-center">
-                  <Bot className="mb-2 h-8 w-8 text-muted-foreground/50" />
-                  <p className="text-xs text-center text-muted-foreground">
-                    Ask me about courses and learning paths!
-                  </p>
+                <div className="flex h-full flex-col items-center justify-center p-2 text-center space-y-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold">How can I help you today?</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Ask about courses, career roadmaps, or prerequisites.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-1.5 w-full pt-1">
+                    {[
+                      "Recommend courses for full-stack developer",
+                      "I know React, what backend course is best?",
+                      "How do I start learning Cloud Computing?",
+                    ].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => setInputValue(suggestion)}
+                        className="text-[11px] text-left px-2.5 py-1.5 rounded-md bg-secondary hover:bg-primary/10 hover:text-primary transition-colors border border-border/50 text-muted-foreground truncate"
+                      >
+                        ⚡ {suggestion}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <>

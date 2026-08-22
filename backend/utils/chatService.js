@@ -58,7 +58,7 @@ Example JSON response format:
           content: userInput,
         },
       ],
-      max_tokens: 700,
+      max_tokens: 2048,
       temperature: 0.7,
       response_format: { type: "json_object" },
     });
