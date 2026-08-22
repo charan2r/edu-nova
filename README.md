@@ -11,7 +11,6 @@ An **Adaptive LMS** where students receive personalized, AI-generated learning r
 - 🔓 **Progressive Course Unlocking**: Completing a prerequisite step automatically unlocks the next course in the sequence.
 - 💬 **AI Course Advisor**: Built-in floating chat assistant with starter prompt chips for instant course recommendations.
 - 👥 **Multi-Role LMS**: Support for Admins, Instructors, and Students with role-based access control (RBAC).
-- 🏢 **Multi-Institute Support**: Institute-scoped courses with seamless fallback to global platform offerings.
 
 ---
 
